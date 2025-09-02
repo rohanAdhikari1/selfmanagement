@@ -13,6 +13,7 @@ class UserEnrollment extends Model
         'user_id',
         'site_id',
         'remarks',
+        'status',
         'from_time',
         'to_time',
     ];

@@ -10,5 +10,8 @@ class CleanerTaskReport extends Model
         'cleaner_id',
         'site_id',
         'attendance_id',
+        'task_id',
+        'start_time',
+        'finish_time',
     ];
 }

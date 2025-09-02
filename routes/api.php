@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('taskwithenrollment', [BasicController::class, 'taskWithEnrollment'])->name('api.taskWithEnrollment');
+Route::middleware('auth:sanctum')->name('api.')->group(function () {
+    Route::get('taskwithenrollment', [BasicController::class, 'taskWithEnrollment'])->name('taskWithEnrollment');
+    Route::post('mark_attendance', [BasicController::class, 'markAttendance'])->name('markAttendance');
 });
