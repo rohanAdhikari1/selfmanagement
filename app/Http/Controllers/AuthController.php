@@ -35,8 +35,7 @@ class AuthController extends Controller
         return response()->json([
             'token' => $user->createToken('api-token')->plainTextToken,
             'user' => $user,
-            'role' =>  'user'
+            'role' => $user->getRoleNames()->first()
         ]);
-        // $user->getRoleNames()->first()
     }
 }

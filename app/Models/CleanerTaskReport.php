@@ -14,4 +14,14 @@ class CleanerTaskReport extends Model
         'start_time',
         'finish_time',
     ];
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class, 'site_id');
+    }
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class, 'task_id');
+    }
 }

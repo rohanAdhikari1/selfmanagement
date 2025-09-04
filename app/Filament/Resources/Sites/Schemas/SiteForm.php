@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Resources\Companies\Resources\Branches\Schemas;
+namespace App\Filament\Resources\Sites\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class BranchForm
+class SiteForm
 {
     public static function configure(Schema $schema): Schema
     {

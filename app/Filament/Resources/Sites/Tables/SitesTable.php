@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\Companies\Tables;
+namespace App\Filament\Resources\Sites\Tables;
 
-use App\Filament\Resources\Companies\CompanyResource;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Support\Icons\Heroicon;
+use Filament\Facades\Filament;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class CompaniesTable
+class SitesTable
 {
     public static function configure(Table $table): Table
     {
@@ -21,23 +18,23 @@ class CompaniesTable
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('company.name')
+                    ->visible(fn($livewire) => $livewire instanceof \App\Filament\Resources\Sites\Pages\ListSites)
+                    ->searchable(),
                 TextColumn::make('tax_id')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('phone')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('address1')
-                    ->searchable(),
-                TextColumn::make('address2')
+                    ->label('Email')
                     ->searchable(),
                 TextColumn::make('creator_name')
-                    ->numeric()
+                    ->searchable()
                     ->sortable(),
                 TextColumn::make('updator_name')
-                    ->numeric()
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -52,16 +49,8 @@ class CompaniesTable
                 //
             ])
             ->recordActions([
-                ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
-                    Action::make('sites')
-                        ->icon(Heroicon::BuildingOffice2)
-                        ->url(fn($record) => CompanyResource::getUrl('sites', ['record' => $record])),
-                    Action::make('users')
-                        ->icon(Heroicon::Users)
-                        ->url(fn($record) => CompanyResource::getUrl('users', ['record' => $record]))
-                ])
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

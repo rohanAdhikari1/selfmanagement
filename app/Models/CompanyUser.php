@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 
-class Cleaner extends User
+class CompanyUser extends User
 {
     protected $guarded = [];
 
@@ -15,15 +15,20 @@ class Cleaner extends User
         parent::boot();
         static::addGlobalScope('user', function (Builder $builder) {
             $builder->whereHas('user', function ($query) {
-                $query->role('cleaner');
+                $query->role('company_user');
             });
         });
-        static::creating(function ($cleaner) {
-            $cleaner->user->assignRole('cleaner');
+        static::creating(function ($company_user) {
+            $company_user->user->assignRole('company_user');
         });
     }
     public function user()
     {
         return $this->belongsTo(User::class, 'id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
     }
 }

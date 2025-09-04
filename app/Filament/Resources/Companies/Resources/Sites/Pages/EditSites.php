@@ -2,19 +2,17 @@
 
 namespace App\Filament\Resources\Companies\Resources\Sites\Pages;
 
-use App\Filament\Resources\Companies\Resources\Sites\SiteResource;
+use App\Filament\Resources\Companies\Resources\Sites\SitesResource;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 
-class EditSite extends EditRecord
+class EditSites extends EditRecord
 {
-    protected static string $resource = SiteResource::class;
+    protected static string $resource = SitesResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            ViewAction::make(),
             DeleteAction::make(),
         ];
     }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Companies;
 use App\Filament\Resources\Companies\Pages\CreateCompany;
 use App\Filament\Resources\Companies\Pages\EditCompany;
 use App\Filament\Resources\Companies\Pages\ListCompanies;
+use App\Filament\Resources\Companies\Pages\ManageClientUser;
 use App\Filament\Resources\Companies\Pages\ManageCompanySites;
 use App\Filament\Resources\Companies\Pages\ViewCompany;
 use App\Filament\Resources\Companies\Schemas\CompanyForm;
@@ -55,6 +56,7 @@ class CompanyResource extends Resource
             'view' => ViewCompany::route('/{record}'),
             'edit' => EditCompany::route('/{record}/edit'),
             'sites' => ManageCompanySites::route('/{record}/sites'),
+            'users' => ManageClientUser::route('/{record}/users'),
         ];
     }
 }

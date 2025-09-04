@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Companies\Resources\Sites\Pages;
+namespace App\Filament\Resources\Sites\Pages;
 
-use App\Filament\Resources\Companies\Resources\Sites\SiteResource;
+use App\Filament\Resources\Sites\SiteResource;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 

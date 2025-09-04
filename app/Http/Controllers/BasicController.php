@@ -22,12 +22,25 @@ class BasicController extends Controller
             ], 404);
         }
 
-        $attendance = CleanerAttendance::whereNull('end_time')
+        $attendanceId = CleanerAttendance::whereNull('end_time')
             ->where('cleaner_id', $userId)
-            ->value('enrollment_id');
+            ->value('id');
 
-        if ($attendance) {
-            $data = Task::all();
+
+        if ($attendanceId) {
+            $tasks = Task::all();
+            $data = $tasks->map(function ($task) use ($attendanceId) {
+                $report = CleanerTaskReport::where('task_id', $task->id)
+                    ->where('attendance_id', $attendanceId)
+                    ->first();
+                return [
+                    'id' => $task->id,
+                    'name' => $task->name,
+                    'description' => $task->description,
+                    'report_id' => $report ? $report->id : null,
+                    'is_complete' => $report ? (bool) $report->finish_time : false,
+                ];
+            });
         } else {
             $data = UserEnrollment::where('user_id', $userId)
                 ->where('status', true)
@@ -37,7 +50,7 @@ class BasicController extends Controller
 
         return response()->json([
             'status'   => true,
-            'is_online' => (bool) $attendance,
+            'is_online' => (bool) $attendanceId,
             'result'   => $data
         ]);
     }
@@ -93,16 +106,5 @@ class BasicController extends Controller
             'status'   => true,
             'result'   => "SuccessFully Marked your attendance!"
         ]);
-    }
-
-    public function workHistory()
-    {
-        $cleaner_task_report = CleanerTaskReport::select('cleaner_id', 'site_id', 'attendance_id', 'task_id', 'finish_time')
-            ->orderBy('finish_time')
-            ->get();
-        $final_data = $cleaner_task_report->groupBy('finish_time')->map(function ($dateGroup) {
-            return $dateGroup->groupBy('site_id');
-        });
-        dd($final_data);
     }
 }
