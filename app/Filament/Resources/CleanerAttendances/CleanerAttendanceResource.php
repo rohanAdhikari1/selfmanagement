@@ -12,8 +12,8 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -63,6 +63,15 @@ class CleanerAttendanceResource extends Resource
                     ->dateTime(),
                 TextEntry::make('end_time')
                     ->dateTime(),
+                ImageEntry::make('entry_image_path')
+                    ->label('Entry Image'),
+                ImageEntry::make('exit_image_path')
+                    ->label('Exit Image'),
+                TextEntry::make('entry_longitude'),
+                TextEntry::make('entry_latitude'),
+                TextEntry::make('exit_longitude'),
+                TextEntry::make('exit_latitude'),
+                TextEntry::make('end_time'),
                 TextEntry::make('created_at')
                     ->dateTime(),
                 TextEntry::make('updated_at')
@@ -102,7 +111,7 @@ class CleanerAttendanceResource extends Resource
                 //
             ])
             ->recordActions([
-                // ViewAction::make(),
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])

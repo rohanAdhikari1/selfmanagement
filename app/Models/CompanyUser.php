@@ -18,7 +18,7 @@ class CompanyUser extends User
                 $query->role('company_user');
             });
         });
-        static::creating(function ($company_user) {
+        static::created(function ($company_user) {
             $company_user->user->assignRole('company_user');
         });
     }

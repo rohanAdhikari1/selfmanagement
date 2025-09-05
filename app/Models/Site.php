@@ -13,6 +13,7 @@ class Site extends Model
     protected $fillable = [
         'uid',
         'name',
+        'company_id',
         'tax_id',
         'phone',
         'email',

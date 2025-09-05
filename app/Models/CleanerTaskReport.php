@@ -13,6 +13,10 @@ class CleanerTaskReport extends Model
         'task_id',
         'start_time',
         'finish_time',
+        'start_longitude',
+        'start_latitude',
+        'finish_longitude',
+        'finish_latitude',
     ];
 
     public function site()
@@ -23,5 +27,10 @@ class CleanerTaskReport extends Model
     public function task()
     {
         return $this->belongsTo(Task::class, 'task_id');
+    }
+
+    public function cleaner()
+    {
+        return $this->belongsTo(Cleaner::class, 'cleaner_id');
     }
 }

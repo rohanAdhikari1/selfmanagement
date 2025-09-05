@@ -9,6 +9,7 @@ use App\Models\Task;
 use App\Models\UserEnrollment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class BasicController extends Controller
 {
@@ -58,7 +59,10 @@ class BasicController extends Controller
     public function markAttendance(Request $request)
     {
         $request->validate([
-            'company_uid' => 'required|string'
+            'company_uid' => 'required|string',
+            'file' => 'required|file|mimes:png|max:10240',
+            'longitude' => 'required|string',
+            'latitude' => 'required|string',
         ]);
         $userId = auth()->id();
         if (!$userId) {
@@ -71,9 +75,15 @@ class BasicController extends Controller
         $attendance = CleanerAttendance::whereNull('end_time')
             ->where('cleaner_id', $userId)
             ->first();
+        $file = $request->file('file');
+        $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+        $path = $file->storeAs('attendance_images', $uniqueFileName);
 
         if ($attendance) {
             $attendance->end_time = Carbon::now();
+            $attendance->exit_longitude = $request->longitude;
+            $attendance->exit_latitude = $request->latitude;
+            $attendance->exit_image_path = $path;
             $attendance->save();
         } else {
             $site_id = Site::where('uid', $request->company_uid)->value('id');
@@ -95,10 +105,14 @@ class BasicController extends Controller
                     'message'   => "Your are not enrolled for this. Please contact Administrator!"
                 ]);
             }
+
             CleanerAttendance::create([
                 'cleaner_id' => $userId,
                 'enrollment_id' => $enroll_ment_id,
                 'start_time' => Carbon::now(),
+                'entry_longitude' => $request->longitude,
+                'entry_latitude' => $request->latitude,
+                'entry_image_path' => $path,
             ]);
         }
 

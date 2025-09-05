@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Sites\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -11,32 +12,47 @@ class SiteForm
     {
         return $schema
             ->components([
-                TextInput::make('uid')
-                    ->required(),
-                TextInput::make('company_id')
+                Select::make('company_id')
+                    ->label('Company')
+                    ->relationship('company', 'name')
+                    ->searchable()
                     ->required()
-                    ->numeric(),
+                    ->preload()
+                    ->visible(fn($livewire) => $livewire instanceof \App\Filament\Resources\Sites\Pages\EditSite || $livewire instanceof \App\Filament\Resources\Sites\Pages\CreateSite)
+                    ->columnSpan(2),
                 TextInput::make('name')
-                    ->required(),
+                    ->label('Full Name')
+                    ->placeholder('Enter full legal name')
+                    ->required()
+                    ->autofocus()
+                    ->columnSpan(2),
                 TextInput::make('tax_id')
-                    ->default(null),
+                    ->label('Tax ID')
+                    ->placeholder('Enter tax identification number')
+                    ->default(null)
+                    ->helperText('Optional')
+                    ->columnSpan(1),
+
                 TextInput::make('phone')
-                    ->tel()
-                    ->default(null),
+                    ->label('Phone Number')
+                    ->placeholder('+1 (555) 123-4567')
+                    ->tel(),
                 TextInput::make('email')
-                    ->label('Email address')
+                    ->label('Email Address')
+                    ->placeholder('name@example.com')
                     ->email()
-                    ->default(null),
+                    ->default(null)
+                    ->columnSpan(2),
                 TextInput::make('address1')
-                    ->default(null),
+                    ->label('Street Address')
+                    ->placeholder('123 Main St')
+                    ->default(null)
+                    ->columnSpan(2),
                 TextInput::make('address2')
-                    ->default(null),
-                TextInput::make('created_by')
-                    ->numeric()
-                    ->default(null),
-                TextInput::make('updated_by')
-                    ->numeric()
-                    ->default(null),
+                    ->label('Apartment / Suite')
+                    ->placeholder('Apt 4B')
+                    ->default(null)
+                    ->columnSpan(2),
             ]);
     }
 }

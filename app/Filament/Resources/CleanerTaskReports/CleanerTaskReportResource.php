@@ -20,7 +20,7 @@ class CleanerTaskReportResource extends Resource
 {
     protected static ?string $model = CleanerTaskReport::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ReceiptPercent;
 
     public static function form(Schema $schema): Schema
     {

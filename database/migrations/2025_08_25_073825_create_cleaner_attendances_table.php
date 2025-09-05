@@ -17,7 +17,13 @@ return new class extends Migration
             $table->foreignId('enrollment_id')->nullable()->constrained('user_enrollments')->onDelete('set null');
             $table->timestamp('start_time');
             $table->timestamp('end_time')->nullable();
+            $table->string('entry_longitude')->nullable();
+            $table->string('entry_latitude')->nullable();
+            $table->string('exit_longitude')->nullable();
+            $table->string('exit_latitude')->nullable();
             $table->text('remarks')->nullable();
+            $table->string('entry_image_path')->nullable();
+            $table->string('exit_image_path')->nullable();
             $table->timestamps();
         });
     }

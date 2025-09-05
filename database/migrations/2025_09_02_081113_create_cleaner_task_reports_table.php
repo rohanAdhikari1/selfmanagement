@@ -19,6 +19,10 @@ return new class extends Migration
             $table->foreignId('attendance_id')->nullable()->constrained('cleaner_attendances')->onDelete('set null');
             $table->timestamp('start_time');
             $table->timestamp('finish_time')->nullable();
+            $table->string('start_longitude')->nullable();
+            $table->string('start_latitude')->nullable();
+            $table->string('finish_longitude')->nullable();
+            $table->string('finish_latitude')->nullable();
             $table->timestamps();
         });
     }

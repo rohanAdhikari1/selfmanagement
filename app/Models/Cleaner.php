@@ -13,12 +13,12 @@ class Cleaner extends User
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope('user', function (Builder $builder) {
+        static::addGlobalScope('cleaner', function (Builder $builder) {
             $builder->whereHas('user', function ($query) {
                 $query->role('cleaner');
             });
         });
-        static::creating(function ($cleaner) {
+        static::created(function ($cleaner) {
             $cleaner->user->assignRole('cleaner');
         });
     }
