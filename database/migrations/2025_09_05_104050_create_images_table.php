@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->morphs('model');
             $table->string('title')->nullable();
+            $table->boolean('is_before')->default(true);
             $table->string('description')->nullable();
             $table->string('file_path');
             $table->string('file_name')->nullable();

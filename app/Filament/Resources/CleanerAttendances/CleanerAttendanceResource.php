@@ -71,7 +71,6 @@ class CleanerAttendanceResource extends Resource
                 TextEntry::make('entry_latitude'),
                 TextEntry::make('exit_longitude'),
                 TextEntry::make('exit_latitude'),
-                TextEntry::make('end_time'),
                 TextEntry::make('created_at')
                     ->dateTime(),
                 TextEntry::make('updated_at')

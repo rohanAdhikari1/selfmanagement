@@ -16,7 +16,8 @@ class Image extends Model
         'longitude',
         'latitude',
         'model_type',
-        'model_id'
+        'model_id',
+        'is_before'
     ];
 
     public function model()

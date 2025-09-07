@@ -33,4 +33,9 @@ class CleanerTaskReport extends Model
     {
         return $this->belongsTo(Cleaner::class, 'cleaner_id');
     }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'model');
+    }
 }

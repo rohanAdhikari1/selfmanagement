@@ -4,16 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Models\CleanerAttendance;
 use App\Models\CleanerTaskReport;
+use App\Models\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class WorkController extends Controller
 {
     public function startWork(Request $request)
     {
         $request->validate([
-            'task_id' => 'required|exists:tasks,id'
+            'task_id' => 'required|exists:tasks,id',
+            'files.*' => 'required|file|mimes:png|max:10240',
+            'longitude' => 'required|string',
+            'latitude' => 'required|string',
         ]);
         $userId = auth()->id();
         if (!$userId) {
@@ -49,6 +54,24 @@ class WorkController extends Controller
                 'task_id' => $request->task_id,
                 'start_time' => Carbon::now(),
             ]);
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('report_images/finish', $uniqueFileName);
+                    Image::create([
+                        'title' => $report->task->name . ' Before Image',
+                        'description' => $report->task->name . ' Before image for report',
+                        'file_path' => $path,
+                        'file_name' => $uniqueFileName,
+                        'file_size' => $file->getSize(),
+                        'longitude' => $request->longitude,
+                        'latitude' => $request->latitude,
+                        'model_type' => CleanerTaskReport::class,
+                        'model_id' => $report->id,
+                        'is_before' => true
+                    ]);
+                }
+            }
             return response()->json([
                 'status' => true,
                 'result' => "Successfully marked task as started!",
@@ -67,12 +90,35 @@ class WorkController extends Controller
     public function finishWork(Request $request)
     {
         $request->validate([
-            'report_id' => 'required'
+            'report_id' => 'required',
+            'files.*' => 'required|file|mimes:png|max:10240',
+            'longitude' => 'required|string',
+            'latitude' => 'required|string',
         ]);
         try {
             $report = CleanerTaskReport::findOrFail($request->report_id);
             $report->finish_time = Carbon::now();
             $report->save();
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('report_images/finish', $uniqueFileName);
+                    Image::create([
+                        'title' => $report->task->name . 'Completion Image',
+                        'description' => $report->task->name . 'Completion image for report',
+                        'file_path' => $path,
+                        'file_name' => $uniqueFileName,
+                        'file_size' => $file->getSize(),
+                        'longitude' => $request->longitude,
+                        'latitude' => $request->latitude,
+                        'model_type' => CleanerTaskReport::class,
+                        'model_id' => $report->id,
+                        'is_before' => false
+                    ]);
+                }
+            }
+
             return response()->json([
                 'status' => true,
                 'result' => "Successfully marked task as finished!",
