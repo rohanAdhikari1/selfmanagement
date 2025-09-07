@@ -7,9 +7,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "bezhansalleh/filament-shield": "4.x-dev",
+        "bezhansalleh/filament-shield": "^4.0",
         "endroid/qr-code": "^6.0",
-        "filament/filament": "~4.0",
+        "filament/filament": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1"
@@ -78,7 +78,7 @@
             "php-http/discovery": true
         }
     },
-   
-    "minimum-stability": "dev",
+
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

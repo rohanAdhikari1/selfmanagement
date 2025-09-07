@@ -81,10 +81,18 @@ class CleanerAttendanceResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                if (auth()->user()->hasRole('company_user')) {
+                    $query->whereHas('enrollment.site', function ($q) {
+                        $q->where('company_id', auth()->user()->company_id);
+                    });
+                }
+            })
             ->columns([
                 TextColumn::make('cleaner.full_name')
                     ->searchable(),
                 TextColumn::make('enrollment.site.company.name')
+                    ->hidden(fn() => auth()->user()->hasRole('company_user'))
                     ->searchable(),
                 TextColumn::make('enrollment.site.name')
                     ->searchable(),

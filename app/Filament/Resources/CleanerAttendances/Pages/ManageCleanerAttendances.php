@@ -13,7 +13,8 @@ class ManageCleanerAttendances extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()
+                ->hidden(fn() => auth()->user()->hasAnyRole(['cleaner', 'company_user', 'site_user'])),
         ];
     }
 }
