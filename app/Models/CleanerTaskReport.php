@@ -38,4 +38,14 @@ class CleanerTaskReport extends Model
     {
         return $this->morphMany(Image::class, 'model');
     }
+
+    public function images_before()
+    {
+        return $this->morphMany(Image::class, 'model')->where('is_before', true);
+    }
+
+    public function images_after()
+    {
+        return $this->morphMany(Image::class, 'model')->where('is_before', false);
+    }
 }
