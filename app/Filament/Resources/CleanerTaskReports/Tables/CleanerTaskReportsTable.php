@@ -14,6 +14,13 @@ class CleanerTaskReportsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                if (auth()->user()->hasRole('company_user')) {
+                    $query->whereHas('site', function ($q) {
+                        $q->where('company_id', auth()->user()->company_id);
+                    });
+                }
+            })
             ->columns([
                 TextColumn::make('task.name')
                     ->searchable(),

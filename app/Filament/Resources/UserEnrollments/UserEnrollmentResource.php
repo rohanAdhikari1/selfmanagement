@@ -24,6 +24,8 @@ class UserEnrollmentResource extends Resource
 
     protected static ?string $modelLabel = 'Cleaner Enrollment';
 
+    protected static ?int $navigationSort = 4;
+
     public static function form(Schema $schema): Schema
     {
         return UserEnrollmentForm::configure($schema);

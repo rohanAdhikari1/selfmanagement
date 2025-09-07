@@ -7,6 +7,7 @@ use App\Models\CleanerTaskReport;
 use App\Models\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -46,6 +47,7 @@ class WorkController extends Controller
                 'message'   => "Something Went Wrong!"
             ]);
         }
+        DB::beginTransaction();
         try {
             $report = CleanerTaskReport::create([
                 'cleaner_id' => $userId,
@@ -72,12 +74,14 @@ class WorkController extends Controller
                     ]);
                 }
             }
+            DB::commit();
             return response()->json([
                 'status' => true,
                 'result' => "Successfully marked task as started!",
                 'report_id' => $report->id
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error("Failed to start task: " . $e->getMessage());
             return response()->json([
                 'status' => false,
@@ -95,6 +99,7 @@ class WorkController extends Controller
             'longitude' => 'required|string',
             'latitude' => 'required|string',
         ]);
+        DB::beginTransaction();
         try {
             $report = CleanerTaskReport::findOrFail($request->report_id);
             $report->finish_time = Carbon::now();
@@ -118,12 +123,13 @@ class WorkController extends Controller
                     ]);
                 }
             }
-
+            DB::commit();
             return response()->json([
                 'status' => true,
                 'result' => "Successfully marked task as finished!",
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error("Failed to finish task: " . $e->getMessage());
             return response()->json([
                 'status' => false,

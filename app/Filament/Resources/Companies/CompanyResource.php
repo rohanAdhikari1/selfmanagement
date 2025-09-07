@@ -26,6 +26,8 @@ class CompanyResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'Client';
 
     public static function form(Schema $schema): Schema

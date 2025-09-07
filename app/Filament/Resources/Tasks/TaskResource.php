@@ -12,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
@@ -20,6 +21,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+
 
 class TaskResource extends Resource
 {
@@ -30,6 +32,16 @@ class TaskResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $modelLabel = "Task SetUp";
+
+    protected static ?int $navigationSort = 3;
+
+    public static function getModelLabel(): string
+    {
+        if (Filament::auth()->user()->hasRole('company_user')) {
+            return "Tasks";
+        }
+        return static::$modelLabel ?? parent::getModelLabel();
+    }
 
     public static function form(Schema $schema): Schema
     {

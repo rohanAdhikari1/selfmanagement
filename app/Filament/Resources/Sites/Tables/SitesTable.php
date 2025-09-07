@@ -15,6 +15,11 @@ class SitesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                if (Filament::auth()->user()->hasRole('company_user')) {
+                    $query->where('company_id', Filament::auth()->user()->company_id);
+                }
+            })
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
