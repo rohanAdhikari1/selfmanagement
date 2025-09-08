@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\DataManagerTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class InspectionAnswerOption extends Model
 {
+    use DataManagerTrait;
+
     protected $fillable = [
         'name',
         'description',

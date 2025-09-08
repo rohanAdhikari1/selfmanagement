@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('inspectionreports', function (Blueprint $table) {
             $table->id();
+            $table->string('report_number')->unique();
+            $table->string('title')->nullable();
+            $table->foreignId('site_id')->constrained('sites')->cascadeOnDelete();
+            $table->string('inspection_type')->nullable();
+            $table->string('frequency')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
