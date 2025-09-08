@@ -27,6 +27,8 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/')
             ->login()
+            ->brandLogo(fn() => view('brand'))
+            ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -51,6 +53,8 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('9rem')
             ->plugins([
                 FilamentShieldPlugin::make()->gridColumns([
                     'default' => 1,

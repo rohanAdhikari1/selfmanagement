@@ -1,3 +1,9 @@
 <x-filament-panels::page>
-    {{-- Page content --}}
+
+
+    <div>
+        Check Hello World
+    </div>
+
+
 </x-filament-panels::page>
