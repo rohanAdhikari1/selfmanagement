@@ -71,4 +71,14 @@ class User extends Authenticatable implements FilamentUser, HasName
     {
         return $this->is_active;
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class);
+    }
 }

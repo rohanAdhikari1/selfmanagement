@@ -98,10 +98,6 @@ class CleanerInfolist
                         TextEntry::make('company.name')
                             ->label('Company')
                             ->hidden(fn($record) => blank($record->company_id)),
-
-                        TextEntry::make('site.name')
-                            ->label('Site')
-                            ->hidden(fn($record) => blank($record->site_id)),
                     ])
                     ->columns(2),
             ]);

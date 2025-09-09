@@ -37,7 +37,7 @@ class TaskResource extends Resource
 
     public static function getModelLabel(): string
     {
-        if (Filament::auth()->user()->hasRole('company_user')) {
+        if (Filament::auth()->check() && Filament::auth()->user()->hasRole('company_user')) {
             return "Tasks";
         }
         return static::$modelLabel ?? parent::getModelLabel();

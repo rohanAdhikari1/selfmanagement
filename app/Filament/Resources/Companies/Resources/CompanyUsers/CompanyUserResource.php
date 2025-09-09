@@ -11,6 +11,7 @@ use App\Filament\Resources\CompanyUsers\Schemas\CompanyUserInfolist;
 use App\Filament\Resources\CompanyUsers\Tables\CompanyUsersTable;
 use App\Models\CompanyUser;
 use BackedEnum;
+use Filament\Resources\ParentResourceRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -22,7 +23,11 @@ class CompanyUserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $parentResource = CompanyResource::class;
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return CompanyResource::asParent()
+            ->relationship('users');
+    }
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\Sites\Tables;
 
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -54,6 +58,22 @@ class SitesTable
                 //
             ])
             ->recordActions([
+                Action::make('downloadQr')
+                    ->label('Download QR')
+                    ->icon(Heroicon::QrCode)
+                    ->action(function ($record) {
+                        $writer = new PngWriter();
+                        $qrCode = new QrCode(
+                            data: $record->uid,
+                            size: 300,
+                            margin: 10,
+                        );
+                        $result = $writer->write($qrCode);
+                        // $base64 = $result->getDataUri();
+                        return response($result->getString())
+                            ->header('Content-Type', $result->getMimeType())
+                            ->header('Content-Disposition', 'attachment; filename="qr-' . $record->uid . '.png"');
+                    }),
                 ViewAction::make(),
                 EditAction::make(),
             ])

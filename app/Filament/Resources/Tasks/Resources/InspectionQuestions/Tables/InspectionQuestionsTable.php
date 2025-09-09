@@ -15,8 +15,8 @@ class InspectionQuestionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('task_id')
-                    ->numeric()
+                TextColumn::make('SN')
+                    ->rowIndex()
                     ->sortable(),
                 TextColumn::make('name')
                     ->searchable(),
@@ -26,12 +26,12 @@ class InspectionQuestionsTable
                 TextColumn::make('total_point')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('created_by')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('updated_by')
-                    ->numeric()
-                    ->sortable(),
+                TextColumn::make('creator_name')
+                    ->label('Created By')
+                    ->searchable(),
+                TextColumn::make('updator_name')
+                    ->label('Updated By')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -41,6 +41,8 @@ class InspectionQuestionsTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->reorderable('order')
+            ->paginatedWhileReordering()
             ->filters([
                 //
             ])

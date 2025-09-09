@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
                 'password' =>  bcrypt('Rohan@567'),
             ]
         );
-        // Role::create(['name' => 'super_admin']);
+        Role::create(['name' => 'super_admin']);
         $user->assignRole('super_admin');
     }
 }

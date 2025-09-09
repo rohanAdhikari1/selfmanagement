@@ -5,6 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Cleaner;
 use App\Models\Company;
 use App\Models\Site;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\UserEnrollment;
 use Filament\Support\Icons\Heroicon;
@@ -55,7 +56,7 @@ class StatsOverview extends StatsOverviewWidget
                 ->description('Total registered cleaners')
                 ->icon(Heroicon::UserGroup)
                 ->color('primary'),
-            Stat::make('Tasks', Cleaner::count())
+            Stat::make('Tasks', Task::count())
                 ->description('Total Tasks')
                 ->icon(Heroicon::ClipboardDocumentList)
                 ->color('primary'),
@@ -80,7 +81,7 @@ class StatsOverview extends StatsOverviewWidget
                 ->description('Total registered cleaners')
                 ->icon(Heroicon::UserGroup)
                 ->color('warning'),
-            Stat::make('Tasks', Cleaner::count())
+            Stat::make('Tasks', Task::count())
                 ->description('Total Tasks')
                 ->icon(Heroicon::ClipboardDocumentList)
                 ->color('danger'),

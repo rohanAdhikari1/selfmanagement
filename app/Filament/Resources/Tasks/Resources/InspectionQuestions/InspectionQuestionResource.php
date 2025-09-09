@@ -11,6 +11,7 @@ use App\Filament\Resources\Tasks\Resources\InspectionQuestions\Tables\Inspection
 use App\Filament\Resources\Tasks\TaskResource;
 use App\Models\InspectionQuestion;
 use BackedEnum;
+use Filament\Resources\ParentResourceRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -22,7 +23,11 @@ class InspectionQuestionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $parentResource = TaskResource::class;
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return TaskResource::asParent()
+            ->relationship('inspectionQuestions');
+    }
 
     protected static ?string $recordTitleAttribute = 'name';
 

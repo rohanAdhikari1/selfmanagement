@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\CompanyUsers\Tables;
 
+use App\Models\CompanyUser;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -46,8 +49,48 @@ class CompanyUsersTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    Action::make('toggleStatus')
+                        ->label(fn(CompanyUser $record) => $record->is_active ? 'Deactivate' : 'Activate')
+                        ->action(function (CompanyUser $record) {
+                            $record->update([
+                                'is_active' => !$record->is_active,
+                            ]);
+                        })
+                        ->icon(fn(CompanyUser $record) => $record->is_active ? 'heroicon-s-x-circle' : 'heroicon-s-check')
+                        ->color(fn(CompanyUser $record) => $record->is_active ? 'danger' : 'success'),
+                    // Action::make('reset-password')
+                    //     ->label('Reset Password')
+                    //     ->icon('heroicon-o-key')
+                    //     ->modalHeading('Reset Password')
+                    //     ->form([
+                    //         Forms\Components\TextInput::make('new_password')
+                    //             ->label('New Password')
+                    //             ->password()
+                    //             ->required()
+                    //             ->revealable()
+                    //             ->minLength(8),
+                    //         Forms\Components\TextInput::make('new_password_confirmation')
+                    //             ->label('Confirm New Password')
+                    //             ->password()
+                    //             ->revealable()
+                    //             ->required()
+                    //             ->same('new_password'),
+                    //     ])
+                    //     ->action(function ($record, $data) {
+                    //         $record->forceFill([
+                    //             'password' => Hash::make($data['new_password'])
+                    //         ])->setRememberToken(Str::random(60));
+
+                    //         $record->save();
+                    //         Notification::make()
+                    //             ->title('Password Reset successfully')
+                    //             ->success()
+                    //             ->send();
+                    //     }),
+                    ViewAction::make(),
+                    EditAction::make(),
+                ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
