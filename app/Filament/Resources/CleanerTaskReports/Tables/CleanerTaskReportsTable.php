@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\CleanerTaskReports\Tables;
 
+use App\Models\CleanerTaskReport;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class CleanerTaskReportsTable
@@ -22,13 +25,21 @@ class CleanerTaskReportsTable
                 }
             })
             ->columns([
+                TextColumn::make('task.name')
+                    ->searchable(),
                 TextColumn::make('cleaner.full_name')
                     ->searchable(),
                 TextColumn::make('site.name')
                     ->searchable(),
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('site_id')
-            ->defaultKeySort(false)
             ->filters([
                 // SelectFilter::make('site_id')
                 // ->label('Site')
@@ -39,6 +50,7 @@ class CleanerTaskReportsTable
                 //     ->hidden(auth()->user()->hasAnyRole(['cleaner']))
                 //     ->relationship('cleaner', 'full_name')
             ])
+            ->defaultGroup('cleaner.full_name')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

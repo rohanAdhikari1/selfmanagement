@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\CleanerTaskReports\Pages;
 
 use App\Filament\Resources\CleanerTaskReports\CleanerTaskReportResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Database\Eloquent\Model;
 
 class ListCleanerTaskReports extends ListRecords
 {
@@ -16,10 +14,5 @@ class ListCleanerTaskReports extends ListRecords
         return [
             // CreateAction::make(),
         ];
-    }
-
-    public function getTableRecordKey(Model | array $record): string
-    {
-        return $record->site_id;
     }
 }

@@ -1,35 +1,27 @@
 <?php
 
-namespace App\Filament\Resources\CleanerTaskReports\Schemas;
+namespace App\Livewire;
 
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Component;
 
-class CleanerTaskReportInfolist
+class CleanerReportInfoList extends Component implements HasSchemas
 {
-    public static function configure(Schema $schema): Schema
+    use InteractsWithSchemas;
+
+    public $data;
+
+    public function reportInfolist(Schema $schema): Schema
     {
         return $schema
+            ->record($this->data)
             ->components([
-                Section::make('Task & Cleaner')
-                    ->description('Details of the task and assigned cleaner')
-                    ->icon(Heroicon::ClipboardDocumentList)
-                    ->schema([
-                        TextEntry::make('task.name')
-                            ->label('Task')
-                            ->icon(Heroicon::ClipboardDocumentList),
-                        TextEntry::make('cleaner.full_name')
-                            ->label('Cleaner')
-                            ->icon(Heroicon::User),
-                        TextEntry::make('site.name')
-                            ->label('Site')
-                            ->icon(Heroicon::MapPin),
-                    ])->columns(3)
-                    ->columnSpanFull(),
-
                 Section::make('Schedule')
                     ->icon(Heroicon::Clock)
                     ->schema([
@@ -50,14 +42,13 @@ class CleanerTaskReportInfolist
                             ->label('Updated At')
                             ->icon(Heroicon::ArrowPath),
                     ])->columns(2),
-
-
                 Section::make('Images')
                     ->icon(Heroicon::Camera)
                     ->schema([
                         ImageEntry::make('images_before.file_path')
                             ->label('Before')
                             ->stacked()
+                            ->simpleLightbox(fn($record) =>  dd($record?->images_before), defaultDisplayUrl: true)
                             ->imageHeight(200),
                         ImageEntry::make('images_after.file_path')
                             ->label('After')
@@ -65,6 +56,12 @@ class CleanerTaskReportInfolist
                             ->imageHeight(200),
                     ])->columns(2)
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->columns(2);
+    }
+
+    public function render()
+    {
+        return view('livewire.cleaner-report-info-list');
     }
 }
