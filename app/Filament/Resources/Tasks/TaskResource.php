@@ -77,6 +77,10 @@ class TaskResource extends Resource
         return $table
             ->recordTitleAttribute('name')
             ->columns([
+                TextColumn::make('Sn')
+                    ->label('S.N')
+                    ->rowIndex()
+                    ->sortable(),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('creator_name')

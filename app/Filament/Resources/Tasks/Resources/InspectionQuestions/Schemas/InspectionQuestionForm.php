@@ -12,27 +12,17 @@ class InspectionQuestionForm
     {
         return $schema
             ->components([
-                TextInput::make('task_id')
-                    ->required()
-                    ->numeric(),
                 TextInput::make('name')
+                    ->label('Question')
                     ->required(),
-                Textarea::make('description')
-                    ->default(null)
-                    ->columnSpanFull(),
-                TextInput::make('order')
-                    ->numeric()
-                    ->default(null),
                 TextInput::make('total_point')
+                    ->label('Total Points')
                     ->required()
                     ->numeric()
                     ->default(10),
-                TextInput::make('created_by')
-                    ->numeric()
-                    ->default(null),
-                TextInput::make('updated_by')
-                    ->numeric()
-                    ->default(null),
+                Textarea::make('description')
+                    ->default(null)
+                    ->columnSpanFull(),
             ]);
     }
 }

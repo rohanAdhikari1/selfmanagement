@@ -56,6 +56,7 @@ class CleanerTaskReportsTable
                 //     ->hidden(auth()->user()->hasAnyRole(['cleaner']))
                 //     ->relationship('cleaner', 'full_name')
             ])
+            ->defaultGroup('cleaner.full_name')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
