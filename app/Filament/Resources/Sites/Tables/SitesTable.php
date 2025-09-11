@@ -70,9 +70,10 @@ class SitesTable
                         );
                         $result = $writer->write($qrCode);
                         // $base64 = $result->getDataUri();
-                        return response($result->getString())
-                            ->header('Content-Type', $result->getMimeType())
-                            ->header('Content-Disposition', 'attachment; filename="qr-' . $record->uid . '.png"');
+                        return view('filament.actions.company-qr-code-modal', [
+                            'qr' => $base64,
+                            'record' => $record,
+                        ]);
                     }),
                 ViewAction::make(),
                 EditAction::make(),
