@@ -18,4 +18,9 @@ class InspectionQuestion extends Model
         'created_by',
         'updated_by',
     ];
+
+    public function task()
+    {
+        return $this->belongsTo(Task::class, 'task_id');
+    }
 }
