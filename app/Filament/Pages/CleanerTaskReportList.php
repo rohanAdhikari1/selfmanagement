@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\CleanerTaskReport as PagesCleanerTaskReport;
 use App\Models\CleanerTaskReport;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -58,7 +60,9 @@ class CleanerTaskReportList extends Page implements HasTable
                 // ...
             ])
             ->recordActions([
-                // ...
+                Action::make('report')
+                    ->icon(Heroicon::Document)
+                    ->url(fn($record) => PagesCleanerTaskReport::getUrl(['cleaner' => $record['cleaner_id'], 'site' => $record['site_id']]))
             ])
             ->toolbarActions([
                 // ...

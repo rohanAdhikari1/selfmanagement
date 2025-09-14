@@ -3,10 +3,13 @@
 namespace App\Filament\Pages;
 
 use App\Livewire\CleanerReportInfoList;
+use App\Models\Cleaner;
 use App\Models\CleanerTaskReport as ModelsCleanerTaskReport;
+use App\Models\Site;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\Url;
 
 class CleanerTaskReport extends Page
 {
@@ -17,6 +20,12 @@ class CleanerTaskReport extends Page
     protected string $view = 'filament.pages.cleaner-task-report';
 
     public $records;
+
+    #[Url]
+    public $cleaner;
+
+    #[Url]
+    public $site;
 
     public function getMaxContentWidth(): Width
     {
@@ -30,6 +39,8 @@ class CleanerTaskReport extends Page
 
     public function mount()
     {
-        $this->records = ModelsCleanerTaskReport::all();
+        Cleaner::findOrFail($this->cleaner);
+        Site::findOrFail($this->site);
+        $this->records = ModelsCleanerTaskReport::where('site_id', $this->site)->where('cleaner_id', $this->cleaner)->get();
     }
 }
