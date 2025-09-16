@@ -24,8 +24,15 @@ class Inspectionreport extends Model
     protected static function booted()
     {
         static::creating(function ($report) {
-            $lastReportNumber = self::max('report_number') ?? 0;
-            $newNumber = $lastReportNumber + 1;
+            $lastReportNumber = self::max('report_number');
+
+            if ($lastReportNumber) {
+                $number = (int) preg_replace('/[^0-9]/', '', $lastReportNumber);
+            } else {
+                $number = 0;
+            }
+
+            $newNumber = $number + 1;
             $report->report_number = 'REP-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
         });
     }

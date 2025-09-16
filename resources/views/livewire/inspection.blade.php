@@ -22,10 +22,10 @@
             <x-ts-select.styled label="Frequency *" wire:model="frequency" :options="$frequencies" required />
         </div>
         <div class="space-y-2">
-            <p class="text-xs text-slate-500">
+            {{-- <p class="text-xs text-slate-500">
                 After starting inspection it is saved as <span class="font-semibold text-amber-600">Draft</span>.
                 If closed, it will be saved.
-            </p>
+            </p> --}}
             <button type="submit"
                 class="w-full py-3 px-4 rounded-md bg-amber-600 text-white font-medium shadow-sm hover:bg-amber-800 
                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 flex justify-center items-center space-x-2"
