@@ -93,6 +93,10 @@
                     </div>
                 </x-ts-card>
             @endforeach
+
+            <div class="mt-6 mx-3">
+                <x-ts-signature label="Signature of Candidate" clearable />
+            </div>
         </div>
     </div>
 
