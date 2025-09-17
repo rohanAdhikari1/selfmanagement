@@ -44,7 +44,7 @@ class Inspectionreport extends Model
 
     public function items()
     {
-        return $this->hasMany(InspectionreportItem::class, 'inspection_report_id');
+        return $this->hasMany(InspectionreportItem::class, 'inspectionreport_id');
     }
 
     public function site()
