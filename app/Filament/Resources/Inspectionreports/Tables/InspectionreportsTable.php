@@ -38,6 +38,9 @@ class InspectionreportsTable
                 IconColumn::make('is_active')
                     ->label('Status')
                     ->boolean(),
+                IconColumn::make('is_draft')
+                    ->label('Draft')
+                    ->boolean(),
                 TextColumn::make('creator_name')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),

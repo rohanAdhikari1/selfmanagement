@@ -9,9 +9,9 @@
 }" x-init="hasFlutterChannel = !!(window.FlutterChannel && FlutterChannel.postMessage)">
 
     {{-- Starting  --}}
-    <div class="md:p-4 max-w-3xl mx-auto space-y-2 md:space-y-6 relative">
+    <div class="md:p-4 max-w-3xl mx-auto relative">
         <div class="absolute cursor-text top-0 right-2 text-xs mt-1">{{ $this->draftMessage }}</div>
-        <div class="mt-2">
+        <div class="mt-2 space-y-2 md:space-y-6">
             @foreach (collect($questions)->groupBy(fn($q) => $q['task']['name']) as $taskName => $taskQuestions)
                 <x-ts-card minimize>
                     <x-slot:header>

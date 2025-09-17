@@ -2,15 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Pages\InspestionReportDetailPage;
 use App\Models\Inspectionreport;
-use Dom\Text;
-use Filament\Actions\BulkActionGroup;
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 class InspectionReportWidget extends TableWidget
 {
@@ -21,7 +21,7 @@ class InspectionReportWidget extends TableWidget
 
     protected function getTableQuery(): Builder
     {
-        return Inspectionreport::query();
+        return Inspectionreport::query()->latest();
     }
 
 
@@ -32,7 +32,8 @@ class InspectionReportWidget extends TableWidget
             ->heading('Inspection Reports')
             ->description('Latest Inspection Reports')
             ->columns([
-                TextColumn::make('report_no'),
+                TextColumn::make('report_number')
+                    ->label('Report No'),
                 TextColumn::make('title'),
                 TextColumn::make('site.company.name')
                     ->hidden(fn() => auth()->user()->hasAnyRole(['company_user', 'site_user']))
@@ -40,11 +41,11 @@ class InspectionReportWidget extends TableWidget
                 TextColumn::make('site.name')
                     ->hidden(fn() => auth()->user()->hasRole('site_user'))
                     ->label('Site'),
-                TextColumn::make('inspection_type')
-                    ->label('Inspection Type'),
-                // TextColumn::make('frequency')
-                //     ->label('Frequency')
-                //     ->searchable(),
+                // TextColumn::make('inspection_type')
+                //     ->label('Inspection Type'),
+                TextColumn::make('frequency')
+                    ->label('Frequency')
+                    ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean()
                     ->label('Active'),
@@ -56,7 +57,9 @@ class InspectionReportWidget extends TableWidget
                 //
             ])
             ->recordActions([
-                //
+                Action::make('report')
+                    ->icon(Heroicon::Document)
+                    ->url(fn($record) => InspestionReportDetailPage::getUrl())
             ])
             ->striped()
             ->paginated(false);
