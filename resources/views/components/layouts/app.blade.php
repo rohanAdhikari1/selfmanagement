@@ -14,5 +14,20 @@
     {{ $slot }}
     <x-ts-dialog />
 </body>
+@php
+    $token = request()->bearerToken();
+@endphp
+<script>
+    document.addEventListener('livewire:init', () => {
+        const token = "{{ $token }}";
+        if (window.FlutterChannel) {
+            Livewire.hook('request', ({
+                options
+            }) => {
+                options.headers['Authorization'] = `Bearer ${token}`;
+            });
+        }
+    });
+</script>
 
 </html>

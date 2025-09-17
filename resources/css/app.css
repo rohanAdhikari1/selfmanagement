@@ -5,8 +5,8 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@source '../views/livewire/**/*.blade.php';
+@source '../views/components/**/*.blade.php';
 
 @source '../../vendor/tallstackui/tallstackui/**/*.php';
 

@@ -9,6 +9,11 @@ class Inspectionreport extends Model
 {
     use DataManagerTrait;
 
+    public function getRouteKeyName()
+    {
+        return 'report_number';
+    }
+
     protected $fillable = [
         'report_number',
         'title',

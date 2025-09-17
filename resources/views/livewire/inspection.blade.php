@@ -27,7 +27,7 @@
                 If closed, it will be saved.
             </p> --}}
             <button type="submit"
-                class="w-full py-3 px-4 rounded-md bg-amber-600 text-white font-medium shadow-sm hover:bg-amber-800 
+                class="w-full cursor-pointer py-3 px-4 rounded-md bg-amber-600 text-white font-medium shadow-sm hover:bg-amber-800 
                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 flex justify-center items-center space-x-2"
                 wire:loading.attr="disabled">
 

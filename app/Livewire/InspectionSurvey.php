@@ -2,13 +2,25 @@
 
 namespace App\Livewire;
 
+use App\Models\InspectionAnswerOption;
+use App\Models\InspectionQuestion;
 use App\Models\Inspectionreport;
+use App\Models\InspectionreportItem;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
 class InspectionSurvey extends Component
 {
-    public array $tempId = [];
+    public array $answerOptions = [];
+    public array $items = [];
+    public array $questions = [];
+    public string $draftMessage = '';
+
+    #[Locked]
+    public Inspectionreport $report;
+
+    public int $tempId;
     public array $tempImages = [];
     public array $tempLocation = [];
 
@@ -47,9 +59,53 @@ class InspectionSurvey extends Component
     //     }
     // }
 
-    public function mount($report)
+    public function mount()
     {
-        $report = Inspectionreport::where('report_number', $report)->firstOrFail();
+        $this->answerOptions = InspectionAnswerOption::where('is_active', true)->select('id', 'name', 'point_percentage')
+            ->get()
+            ->keyBy('id')->toArray();
+        $this->loadDraft();
+    }
+
+    public function loadDraft()
+    {
+        $this->questions = InspectionQuestion::with('task')->get()->toArray();
+        foreach ($this->questions as $q) {
+            $existing = InspectionreportItem::where('inspectionreport_id', $this->report->id)
+                ->where('question_id', $q['id'])
+                ->first();
+            $this->items[$q['id']] = [
+                'answer_id' => $existing->answer_id ?? null,
+                'remarks'   => $existing->remarks ?? null,
+            ];
+        }
+    }
+
+    public function updatedItems($value, $key)
+    {
+        [$questionId, $field] = explode('.', $key);
+        $answerId = $this->items[$questionId]['answer_id'] ?? null;
+        $remarks  = $this->items[$questionId]['remarks'] ?? null;
+        $question = InspectionQuestion::find($questionId);
+        $totalPoint = $question?->total_point ?? 0;
+        $points = 0;
+        if ($answerId && isset($this->answerOptions[$answerId])) {
+            $percentage = $this->answerOptions[$answerId]['point_percentage'];
+            $points = intval(($totalPoint * $percentage) / 100);
+        }
+        InspectionreportItem::updateOrCreate(
+            [
+                'inspectionreport_id' => $this->report->id,
+                'question_id'         => $questionId,
+            ],
+            [
+                'answer_id'      => $answerId,
+                'remarks'        => $remarks,
+                'obtained_point' => $points,
+                'is_active'      => true
+            ]
+        );
+        $this->draftMessage = "Draft saved at " . now()->format('H:i:s');
     }
 
     public function render()
