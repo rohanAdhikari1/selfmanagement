@@ -105,7 +105,7 @@ class InspectionSurvey extends Component
                 'is_active'      => true
             ]
         );
-        $this->draftMessage = "Draft saved at " . now()->format('H:i:s');
+        $this->draftMessage = "Draft saved Last at " . now()->format('H:i:s');
     }
 
     public function render()
