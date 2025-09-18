@@ -1,6 +1,6 @@
 <div x-data="{
     hasFlutterChannel: false,
-    uploadImages(recordId) {
+    uploadImages(recordId, recordItemId) {
         const message = { record_id: recordId, action: 'upload' };
         if (window.FlutterChannel && FlutterChannel.postMessage) {
             FlutterChannel.postMessage(JSON.stringify(message));
@@ -62,10 +62,14 @@
                                     </div>
 
                                     <div class="flex gap-2" x-show="hasFlutterChannel" x-cloak>
-                                        @if ($loop->first)
-                                            @foreach ($tempImages as $image)
-                                                <img src="data:image/jpeg;base64,{{ $image }}"
-                                                    class="w-12 h-12 object-cover" />
+                                        @if (!empty($items[$q['id']]['images']))
+                                            @foreach ($items[$q['id']]['images'] as $img)
+                                                <div class="relative">
+                                                    <img src="{{ $img['url'] }}"
+                                                        class="w-16 h-16 object-cover rounded border" alt="Image">
+                                                    <button wire:click="deleteImage({{ $img['id'] }})"
+                                                        class="absolute top-0 right-0 bg-red-600 text-white text-xs px-1 rounded">x</button>
+                                                </div>
                                             @endforeach
                                         @endif
 
@@ -93,9 +97,28 @@
                     </div>
                 </x-ts-card>
             @endforeach
+            <div class="my-5 px-3">
+                Compliances
+            </div>
+            <div class="mt-6 px-3">
+                <x-ts-signature wire:model="signature" label="Signature of Candidate *" clearable />
+            </div>
+            <div>
+                <button type="button" wire:click="save"
+                    class="w-full cursor-pointer py-3 px-4 rounded-md bg-amber-600 text-white font-medium shadow-sm hover:bg-amber-800 
+               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 flex justify-center items-center space-x-2"
+                    wire:loading.attr="disabled">
 
-            <div class="mt-6 mx-3">
-                <x-ts-signature label="Signature of Candidate" clearable />
+                    <svg wire:loading class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+
+                    <span wire:loading.remove wire:target="save">Submit Inspection</span>
+                    <span wire:loading wire:loading.target="save">Submitting...</span>
+                </button>
             </div>
         </div>
     </div>

@@ -17,4 +17,9 @@ class InspectionreportItem extends Model
     {
         return $this->belongsTo(InspectionAnswerOption::class, 'answer_id');
     }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'model');
+    }
 }

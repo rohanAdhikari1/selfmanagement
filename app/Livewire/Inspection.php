@@ -61,7 +61,7 @@ class Inspection extends Component
         //     'frequency' => $this->frequency,
         // ]);
         // return $this->redirect(route('inspection.survey', ['report' => $report->report_number]));
-        return $this->redirect(route('inspection.survey', ['report' => 'REP-0001']));
+        return $this->redirect(route('inspection.survey', ['report' => 'REP-0001']), navigate: false);
     }
 
     public function render()
