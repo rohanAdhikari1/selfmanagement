@@ -12,9 +12,11 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Illuminate\Support\Str;
+use TallStackUi\Traits\Interactions;
 
 class InspectionSurvey extends Component
 {
+    use Interactions;
     public array $answerOptions = [];
     public array $items = [];
     public array $questions = [];
@@ -67,6 +69,7 @@ class InspectionSurvey extends Component
             ->get()
             ->keyBy('id')->toArray();
         $this->loadDraft();
+        $this->signature = $this->report->inspector_signature;
     }
 
     public function deleteImage($imageId)
@@ -86,8 +89,26 @@ class InspectionSurvey extends Component
             $rules["items.$questionId.answer_id"] = 'required';
         }
         $this->validate($rules);
-        $this->record->inspector_signature = $this->signature;
-        $this->record->save();
+        $this->report->inspector_signature = $this->signature;
+        $this->report->save();
+        $this->dialog()
+            ->warning('Warning!', 'Are you sure to submit the inspection?')
+            ->confirm(method: 'reDirectAll')
+            ->cancel()
+            ->send();
+    }
+
+    public function reDirectAll()
+    {
+        $this->js(" const message = { action: 'finish' };
+        if (window.FlutterChannel && FlutterChannel.postMessage) {
+            FlutterChannel.postMessage(JSON.stringify(message));
+        }");
+        $this->banner()
+            ->success('Done!', 'Inspection is submitted Successfully!')
+            ->flash()
+            ->send();
+        return $this->redirect('/');
     }
 
 
