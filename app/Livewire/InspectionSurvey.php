@@ -80,8 +80,14 @@ class InspectionSurvey extends Component
 
     public function save()
     {
-        sleep(5);
-        dd($this->signature);
+        $rules = [];
+        $rules["signature"] = 'required';
+        foreach ($this->items as $questionId => $item) {
+            $rules["items.$questionId.answer_id"] = 'required';
+        }
+        $this->validate($rules);
+        $this->record->inspector_signature = $this->signature;
+        $this->record->save();
     }
 
 

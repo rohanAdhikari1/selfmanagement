@@ -22,6 +22,7 @@ class Inspectionreport extends Model
         'frequency',
         'is_active',
         'is_draft',
+        'inspectionreport_id',
         'created_by',
         'updated_by',
     ];

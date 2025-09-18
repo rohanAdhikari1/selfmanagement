@@ -18,7 +18,7 @@
                         <div class="flex items-center justify-between p-4 text-secondary-700 dark:text-dark-300 dark:border-b-dark-600 border-b border-gray-100"
                             x-bind:class="{ 'dark:border-b-dark-600 border-b border-gray-100': !minimize }">
                             <div class="text-xl font-semibold text-amber-600">
-                                1. {{ $taskName }}
+                                {{ $loop->iteration }}. {{ $taskName }}
                             </div>
                             <div>
                                 <button type="button" class="cursor-pointer" x-on:click="minimize = !minimize"
@@ -47,7 +47,7 @@
                         @foreach ($taskQuestions as $q)
                             <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
                                 <h3 class="text-lg font-medium text-gray-700 mb-3">
-                                    1. {{ $q['name'] }}
+                                    {{ $loop->iteration }}. {{ $q['name'] }}
                                 </h3>
 
                                 <div class="space-y-3">
@@ -98,12 +98,45 @@
                 </x-ts-card>
             @endforeach
             <div class="my-5 px-3">
-                Compliances
+                <x-ts-card minimize>
+                    <x-slot:header>
+                        <div class="flex items-center justify-between p-4 text-secondary-700 dark:text-dark-300 dark:border-b-dark-600 border-b border-gray-100"
+                            x-bind:class="{ 'dark:border-b-dark-600 border-b border-gray-100': !minimize }">
+                            <div class="text-xl font-semibold text-amber-600">
+                                Compilances
+                            </div>
+                            <div>
+                                <button type="button" class="cursor-pointer" x-on:click="minimize = !minimize"
+                                    dusk="tallstackui_card_minimize">
+
+                                    <svg class="w-6 h-6" x-show="!minimize" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon">
+                                        <path fill-rule="evenodd"
+                                            d="M4.25 12a.75.75 0 0 1 .75-.75h14a.75.75 0 0 1 0 1.5H5a.75.75 0 0 1-.75-.75Z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+
+                                    <svg class="w-6 h-6" x-show="minimize" xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-slot="icon"
+                                        style="display: none;">
+                                        <path fill-rule="evenodd"
+                                            d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+
+                                </button>
+                            </div>
+                        </div>
+                    </x-slot:header>
+                    <div class="space-y-3 px-3">
+                        gfg
+                    </div>
+                </x-ts-card>
             </div>
-            <div class="mt-6 px-3">
+            <div class="mt-6">
                 <x-ts-signature wire:model="signature" label="Signature of Candidate *" clearable />
             </div>
-            <div>
+            <div class="my-3 md:my-1">
                 <button type="button" wire:click="save"
                     class="w-full cursor-pointer py-3 px-4 rounded-md bg-amber-600 text-white font-medium shadow-sm hover:bg-amber-800 
                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-600 flex justify-center items-center space-x-2"
@@ -117,7 +150,7 @@
                     </svg>
 
                     <span wire:loading.remove wire:target="save">Submit Inspection</span>
-                    <span wire:loading wire:loading.target="save">Submitting...</span>
+                    <span wire:loading wire:target="save">Submitting...</span>
                 </button>
             </div>
         </div>
