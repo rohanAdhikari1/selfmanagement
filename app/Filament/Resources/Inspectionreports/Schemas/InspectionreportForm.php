@@ -25,6 +25,8 @@ class InspectionreportForm
                     ->default(null),
                 Toggle::make('is_active')
                     ->required(),
+                Toggle::make('is_draft')
+                    ->required(),
                 TextInput::make('created_by')
                     ->numeric()
                     ->default(null),
