@@ -65,6 +65,9 @@ class InspectionSurvey extends Component
 
     public function mount()
     {
+        if ($this->report->is_draft == false) {
+            abort(404);
+        }
         $this->answerOptions = InspectionAnswerOption::where('is_active', true)->select('id', 'name', 'point_percentage')
             ->get()
             ->keyBy('id')->toArray();
@@ -90,6 +93,7 @@ class InspectionSurvey extends Component
         }
         $this->validate($rules);
         $this->report->inspector_signature = $this->signature;
+        $this->report->is_draft = false;
         $this->report->save();
         $this->dialog()
             ->warning('Warning!', 'Are you sure to submit the inspection?')
@@ -104,10 +108,10 @@ class InspectionSurvey extends Component
         if (window.FlutterChannel && FlutterChannel.postMessage) {
             FlutterChannel.postMessage(JSON.stringify(message));
         }");
-        $this->banner()
-            ->success('Done!', 'Inspection is submitted Successfully!')
-            ->flash()
-            ->send();
+        // $this->banner()
+        //     ->success('Done!', 'Inspection is submitted Successfully!')
+        //     ->flash()
+        //     ->send();
         return $this->redirect('/');
     }
 

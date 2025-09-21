@@ -21,7 +21,7 @@ class InspectionReportWidget extends TableWidget
 
     protected function getTableQuery(): Builder
     {
-        return Inspectionreport::query()->latest();
+        return Inspectionreport::query()->where('is_draft', false)->latest();
     }
 
 

@@ -97,7 +97,7 @@
                     </div>
                 </x-ts-card>
             @endforeach
-            <div class="my-5 px-3">
+            {{-- <div class="my-5 px-3">
                 <x-ts-card minimize>
                     <x-slot:header>
                         <div class="flex items-center justify-between p-4 text-secondary-700 dark:text-dark-300 dark:border-b-dark-600 border-b border-gray-100"
@@ -132,7 +132,7 @@
                         gfg
                     </div>
                 </x-ts-card>
-            </div>
+            </div> --}}
             <div class="mt-6">
                 <x-ts-signature wire:model="signature" label="Signature of Candidate *" clearable />
             </div>

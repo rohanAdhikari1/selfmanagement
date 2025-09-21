@@ -36,9 +36,9 @@ class Inspection extends Component
 
     public function start()
     {
-        $this->go();
-        return;
-        // $this->validate();
+        // $this->go();
+        // return;
+        $this->validate();
         $existingReport = Inspectionreport::where('site_id', $this->site)
             ->whereDate('created_at', now()->toDateString())
             ->first();
@@ -55,13 +55,13 @@ class Inspection extends Component
 
     public function go()
     {
-        // $report = Inspectionreport::create([
-        //     'title' => $this->title,
-        //     'site_id' => $this->site,
-        //     'frequency' => $this->frequency,
-        // ]);
-        // return $this->redirect(route('inspection.survey', ['report' => $report->report_number]));
-        return $this->redirect(route('inspection.survey', ['report' => 'REP-0001']), navigate: false);
+        $report = Inspectionreport::create([
+            'title' => $this->title,
+            'site_id' => $this->site,
+            'frequency' => $this->frequency,
+        ]);
+        return $this->redirect(route('inspection.survey', ['report' => $report->report_number]));
+        // return $this->redirect(route('inspection.survey', ['report' => 'REP-0001']), navigate: false);
     }
 
     public function render()

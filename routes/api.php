@@ -19,5 +19,6 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::post('mark_attendance', [BasicController::class, 'markAttendance'])->name('markAttendance');
     Route::post('start_work', [WorkController::class, 'startWork'])->name('startWork');
     Route::post('finish_work', [WorkController::class, 'finishWork'])->name('finishWork');
+
+    Route::get('work_history', [WorkController::class, 'workHistory'])->name('work_history');
 });
-Route::get('work_history', [WorkController::class, 'workHistory'])->name('work_history');

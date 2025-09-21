@@ -11,7 +11,6 @@
 </head>
 
 <body>
-    <x-ts-banner wire />
     {{ $slot }}
     <x-ts-dialog />
 </body>
