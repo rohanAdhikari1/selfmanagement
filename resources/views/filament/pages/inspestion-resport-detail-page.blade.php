@@ -10,7 +10,7 @@
 
         @forelse ($tasks as $task)
             <div class="my-2">
-                <x-filament::section>
+                <x-filament::section collapsible>
                     <x-slot name="heading">
                         Task: {{ $task->name }}
                     </x-slot>
@@ -39,56 +39,58 @@
                                         {{ $item->question?->name }}
                                     </p>
 
-                                    @if ($item->remark)
+                                    @if ($item->remarks)
                                         <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">
-                                            Remark: {{ $item->remark }}
+                                            Remark: {{ $item->remarks }}
                                         </p>
                                     @endif
+                                    <div>
+                                        <div class="flex gap-2 mt-1 flex-wrap gallery">
+                                            @foreach ($item->images as $image)
+                                                @php
+                                                    $url = Storage::temporaryUrl($image->file_path, now()->addHour(1));
+                                                    $groupName = $item->question?->name ?? 'default';
+                                                    $safeGroupId = preg_replace('/[^a-zA-Z0-9\-_:.]/', '_', $groupName);
+                                                @endphp
+                                                <a href="#" x-lightbox="@js($url)"
+                                                    x-lightbox:group="{{ $safeGroupId }}"
+                                                    class="aspect-square flex rounded-md overflow-hidden hover:opacity-80 transition-opacity">
+                                                    <img loading="lazy" src="{{ $url }}"
+                                                        alt="{{ $image->title }}"
+                                                        class="w-20 h-20 object-cover rounded-md">
+                                                </a>
+                                            @endforeach
+                                        </div>
+                                    </div>
                                 </div>
                                 <div>
-                                    <span
-                                        class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-200">Yes</span>
+                                    <span class="inline-block px-3 text-white py-1 rounded-full text-xs font-semibold"
+                                        style="background-color: {{ $item->answer?->color_code ?? '#D97706' }};">
+                                        {{ $item->answer?->name }}
+                                    </span>
                                 </div>
                             </div>
                         @endforeach
-
-                        <!-- Inspection Item with photos -->
-                        <div
-                            class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 p-2 bg-white dark:bg-gray-800 rounded-lg">
-                            <div class="flex-1">
-                                <p class="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-100">Are
-                                    switches
-                                    working?</p>
-                                <p class="text-gray-500 dark:text-gray-400 text-xs mt-1">Remark: One switch stuck, needs
-                                    adjustment.</p>
-                                <div class="flex gap-2 mt-1 flex-wrap">
-                                    <img src="photo1.jpg" alt="Switch photo" class="w-20 h-20 object-cover rounded-md">
-                                    <img src="photo2.jpg" alt="Switch photo" class="w-20 h-20 object-cover rounded-md">
-                                </div>
-                            </div>
-                            <div>
-                                <span
-                                    class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-200">No</span>
-                            </div>
-                        </div>
-
-                        <!-- Inspection Item without remark/photo -->
-                        <div class="flex justify-between items-center p-2 bg-white dark:bg-gray-800 rounded-lg">
-                            <p class="text-sm sm:text-base font-medium text-gray-800 dark:text-gray-100">Any exposed
-                                live
-                                wires?
-                            </p>
-                            <span
-                                class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">None</span>
-                        </div>
                     </div>
                 </x-filament::section>
             </div>
         @empty
         @endforelse
-
-
     </x-filament::section>
+
+    <div>
+        <h3>Assessors Signatures</h3>
+        <div class="bg-white p-2 h-12 w-20">
+            <a href="#" x-lightbox="@js($report->inspector_signature)">
+                <img src="{{ $report->inspector_signature }}" loading="lazy" alt="Inspector Signature" />
+            </a>
+        </div>
+    </div>
 
 
 </x-filament-panels::page>
+@assets
+    <script defer src="https://cdn.jsdelivr.net/npm/alpine-tailwind-lightbox@1.x.x/dist/alpine-tailwind-lightbox.min.js">
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
+@endassets

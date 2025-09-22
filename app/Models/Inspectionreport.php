@@ -23,6 +23,7 @@ class Inspectionreport extends Model
         'is_active',
         'is_draft',
         'inspectionreport_id',
+        'inspector_signature',
         'created_by',
         'updated_by',
     ];
