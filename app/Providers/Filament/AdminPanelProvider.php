@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Auth\CustomLogin;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -27,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('/')
-            ->login()
+            ->login(CustomLogin::class)
             ->brandLogo(fn() => view('brand'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->colors([
@@ -54,9 +55,9 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->databaseNotifications()
             ->sidebarCollapsibleOnDesktop()
             ->collapsedSidebarWidth('9rem')
+            ->databaseNotifications()
             ->plugins([
                 SimpleLightBoxPlugin::make(),
                 FilamentShieldPlugin::make()->gridColumns([

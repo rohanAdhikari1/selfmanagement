@@ -141,18 +141,27 @@ class WorkController extends Controller
 
     public function workHistory()
     {
-        $cleaner_task_report = CleanerTaskReport::select('cleaner_id', 'site_id', 'attendance_id', 'task_id', 'finish_time')
-            ->orderBy('finish_time')
-            ->with(['site:id,name', 'task:id,name'])
+        $userId = auth()->id();
+        if (!$userId) {
+            return response()->json([
+                'status' => false,
+                'error' => 'User Not Found.'
+            ], 404);
+        }
+        $cleaner_task_report = CleanerTaskReport::whereNotNull('finish_time')
+            ->where('cleaner_id', $userId)
+            ->select(
+                'site_id',
+                'attendance_id',
+                DB::raw('DATE(finish_time) as finish_date')
+            )
+            ->with('site:id,name')
+            ->groupBy('site_id', 'attendance_id', DB::raw('DATE(finish_time)'))
+            ->orderBy('finish_date')
             ->get();
-        $final_data = $cleaner_task_report->groupBy('finish_time')->map(function ($dateGroup) {
-            return $dateGroup->groupBy(function ($task) {
-                return $task->site->name;
-            });
-        });
         return response()->json([
             'status' => true,
-            'result' => $final_data,
+            'result' => $cleaner_task_report,
         ]);
     }
 }

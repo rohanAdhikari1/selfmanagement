@@ -5,12 +5,14 @@ namespace App\Filament\Widgets;
 use App\Filament\Pages\InspestionReportDetailPage;
 use App\Models\Inspectionreport;
 use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class InspectionReportWidget extends TableWidget
 {
@@ -59,7 +61,16 @@ class InspectionReportWidget extends TableWidget
             ->recordActions([
                 Action::make('report')
                     ->icon(Heroicon::Document)
-                    ->url(fn($record) => InspestionReportDetailPage::getUrl(['report' => $record]))
+                    ->action(function () {
+                        $recipient = auth()->user();
+                        $recipient->notifyNow(
+                            Notification::make()
+                                ->title('Test with Body')
+                                ->body('Latest News hain')
+                                ->toDatabase(),
+                        );
+                    })
+                // ->url(fn($record) => InspestionReportDetailPage::getUrl(['report' => $record]))
             ])
             ->striped()
             ->paginated(false);

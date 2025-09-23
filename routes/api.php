@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BasicController;
 use App\Http\Controllers\InspectionController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,4 +24,5 @@ Route::middleware('auth:sanctum')->name('api.')->group(function () {
 
     Route::get('work_history', [WorkController::class, 'workHistory'])->name('work_history');
     Route::get('draft-inspections', [InspectionController::class, 'drafts'])->name('inspection.draft');
+    Route::get('notifications', [NotificationController::class, 'list'])->name('notifications');
 });
