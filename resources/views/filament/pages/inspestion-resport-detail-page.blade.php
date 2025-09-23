@@ -21,7 +21,7 @@
                         });
                         $total = $items->sum('question.total_point');
                         $obtained_points = $items->sum('obtained_point');
-                        $percentage = number_format(($obtained_points / $total) * 100, 2);
+                        $percentage = $total > 0 ? number_format(($obtained_points / $total) * 100, 2) : 0;
                         $point_head = "$obtained_points/$total ($percentage%)";
                     @endphp
 
