@@ -4,6 +4,8 @@ namespace App\Filament\Resources\CleanerAttendances;
 
 use App\Filament\Resources\CleanerAttendances\Pages\ManageCleanerAttendances;
 use App\Models\CleanerAttendance;
+use App\Models\Company;
+use App\Models\Site;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -20,7 +22,13 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class CleanerAttendanceResource extends Resource
 {
@@ -60,6 +68,7 @@ class CleanerAttendanceResource extends Resource
                 TextEntry::make('cleaner.full_name')
                     ->numeric(),
                 TextEntry::make('enrollment.site.compnay.name')
+                    ->hidden(fn() => auth()->user()->hasRole('company_user'))
                     ->label('Site'),
                 TextEntry::make('start_time')
                     ->dateTime(),
@@ -117,8 +126,86 @@ class CleanerAttendanceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('cleaner_id')
+                    ->label('Cleaner')
+                    ->relationship('cleaner', 'full_name')
+                    ->searchable()
+                    ->preload(),
+
+                Filter::make('company_site')
+                    ->schema([
+                        Select::make('company_id')
+                            ->label('Company')
+                            ->placeholder('All')
+                            ->options(
+                                Company::pluck('name', 'id')->all()
+                            )
+                            ->reactive()
+                            ->searchable()
+                            ->default(fn() => auth()->user()->company_id)
+                            ->hidden(fn() => auth()->user()->hasRole('company_user'))
+                            ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
+
+                        Select::make('site_id')
+                            ->label('Site')
+                            ->placeholder('All')
+                            ->options(function (callable $get) {
+                                $query = Site::query();
+                                if (filled($companyId = $get('company_id'))) {
+                                    return $query->where('company_id', $companyId)->pluck('name', 'id')->all();
+                                }
+                                return [];
+                            })->searchable(),
+                    ])
+                    ->hidden(fn() => auth()->user()->hasRole('site_user'))
+                    ->columns(2)
+                    ->columnSpan(2)
+                    ->query(
+                        function (Builder $query, array $data): Builder {
+                            return $query
+                                ->when(
+                                    $data['company_id'] ?? null,
+                                    fn(Builder $query, $companyId) => $query->whereHas('enrollment.site', fn($q) => $q->where('company_id', $companyId)),
+                                )
+                                ->when(
+                                    $data['site_id'] ?? null,
+                                    fn(Builder $query, $siteId) => $query->whereHas('enrollment', fn($q) => $q->where('site_id', $siteId)),
+                                );
+                        }
+                    )->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        $companyId = $data['company_id'] ?? null;
+                        $siteId = $data['site_id'] ?? null;
+                        if ($companyId) {
+                            $companyName = Company::query()
+                                ->where('id', $companyId)
+                                ->value('name');
+                            if ($companyName) {
+                                $indicators['company_id'] = 'Company: ' . $companyName;
+                            }
+                        }
+                        if ($siteId) {
+                            $siteName = Site::query()
+                                ->where('id', $siteId)
+                                ->value('name');
+                            if ($siteName) {
+                                $indicators['site_id'] = 'Site: ' . $siteName;
+                            }
+                        }
+                        return $indicators;
+                    }),
+                TernaryFilter::make('end_time')
+                    ->label('Working')
+                    ->nullable()
+                    ->placeholder('All')
+                    ->trueLabel('Finished')
+                    ->falseLabel('Working')
+                    ->searchable(),
+                DateRangeFilter::make('created_at')
+                    ->label('Date')
+                    ->columnSpan(2)
+                    ->defaultThisMonth(),
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

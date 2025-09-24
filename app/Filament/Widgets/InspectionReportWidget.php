@@ -61,16 +61,7 @@ class InspectionReportWidget extends TableWidget
             ->recordActions([
                 Action::make('report')
                     ->icon(Heroicon::Document)
-                    ->action(function () {
-                        $recipient = auth()->user();
-                        $recipient->notifyNow(
-                            Notification::make()
-                                ->title('Test with Body')
-                                ->body('Latest News hain')
-                                ->toDatabase(),
-                        );
-                    })
-                // ->url(fn($record) => InspestionReportDetailPage::getUrl(['report' => $record]))
+                    ->url(fn($record) => InspestionReportDetailPage::getUrl(['report' => $record]))
             ])
             ->striped()
             ->paginated(false);

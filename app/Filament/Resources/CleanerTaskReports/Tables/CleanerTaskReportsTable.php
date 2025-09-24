@@ -3,14 +3,21 @@
 namespace App\Filament\Resources\CleanerTaskReports\Tables;
 
 use App\Models\CleanerTaskReport;
+use App\Models\Company;
+use App\Models\Site;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
 
 class CleanerTaskReportsTable
 {
@@ -41,15 +48,79 @@ class CleanerTaskReportsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                // SelectFilter::make('site_id')
-                // ->label('Site')
-                //     ->hidden(auth()->user()->hasAnyRole(['cleaner', 'site_user']))
-                //     ->relationship('site', 'name'),
-                // SelectFilter::make('cleaner_id')
-                // ->label('Cleaner')
-                //     ->hidden(auth()->user()->hasAnyRole(['cleaner']))
-                //     ->relationship('cleaner', 'full_name')
-            ])
+                SelectFilter::make('cleaner_id')
+                    ->label('Cleaner')
+                    ->relationship('cleaner', 'full_name')
+                    ->searchable()
+                    ->preload(),
+
+                Filter::make('company_site')
+                    ->schema([
+                        Select::make('company_id')
+                            ->label('Company')
+                            ->placeholder('All')
+                            ->options(
+                                Company::pluck('name', 'id')->all()
+                            )
+                            ->reactive()
+                            ->searchable()
+                            ->default(fn() => auth()->user()->company_id)
+                            ->hidden(fn() => auth()->user()->hasRole('company_user'))
+                            ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
+
+                        Select::make('site_id')
+                            ->label('Site')
+                            ->placeholder('All')
+                            ->options(function (callable $get) {
+                                $query = Site::query();
+                                if (filled($companyId = $get('company_id'))) {
+                                    return $query->where('company_id', $companyId)->pluck('name', 'id')->all();
+                                }
+                                return [];
+                            })->searchable(),
+                    ])
+                    ->hidden(fn() => auth()->user()->hasRole('site_user'))
+                    ->columns(2)
+                    ->columnSpan(2)
+                    ->query(
+                        function (Builder $query, array $data): Builder {
+                            return $query
+                                ->when(
+                                    $data['company_id'] ?? null,
+                                    fn(Builder $query, $companyId) => $query->whereHas('site', fn($q) => $q->where('company_id', $companyId)),
+                                )
+                                ->when(
+                                    $data['site_id'] ?? null,
+                                    fn(Builder $query, $siteId) => $query->where('site_id', $siteId),
+                                );
+                        }
+                    )->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        $companyId = $data['company_id'] ?? null;
+                        $siteId = $data['site_id'] ?? null;
+                        if ($companyId) {
+                            $companyName = Company::query()
+                                ->where('id', $companyId)
+                                ->value('name');
+                            if ($companyName) {
+                                $indicators['company_id'] = 'Company: ' . $companyName;
+                            }
+                        }
+                        if ($siteId) {
+                            $siteName = Site::query()
+                                ->where('id', $siteId)
+                                ->value('name');
+                            if ($siteName) {
+                                $indicators['site_id'] = 'Site: ' . $siteName;
+                            }
+                        }
+                        return $indicators;
+                    }),
+                DateRangeFilter::make('created_at')
+                    ->label('Date')
+                    ->placeholder('All')
+                    ->defaultThisMonth(),
+            ], layout: FiltersLayout::AboveContentCollapsible)
             ->defaultGroup('cleaner.full_name')
             ->recordActions([
                 ViewAction::make(),

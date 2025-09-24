@@ -53,7 +53,8 @@ class CleanerReportInfoList extends Component implements HasSchemas
                         ImageEntry::make('images_after.file_path')
                             ->label('After')
                             ->stacked()
-                            ->imageHeight(200),
+                            ->imageHeight(200)
+                            ->simpleLightbox(fn($image) => $image),
                     ])->columns(2)
                     ->columnSpanFull(),
             ])
