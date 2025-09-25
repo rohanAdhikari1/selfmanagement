@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Sites\Tables;
 
 use App\Enums\Role;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Filament\Actions\Action;
@@ -15,6 +16,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 
 class SitesTable
 {
@@ -77,10 +79,18 @@ class SitesTable
                         );
                         $result = $writer->write($qrCode);
                         $base64 = $result->getDataUri();
-                        return view('filament.actions.company-qr-code-modal', [
+                        $pdf = Pdf::loadView('qr-template', [
                             'qr' => $base64,
                             'record' => $record,
                         ]);
+                        $filename = Str::slug($record->name) . '-qr-code.pdf';
+                        return response()->streamDownload(
+                            function () use ($pdf) {
+                                echo $pdf->output();
+                            },
+                            $filename,
+                            ['Content-Type' => 'application/pdf']
+                        );
                     }),
                 ViewAction::make(),
                 EditAction::make(),

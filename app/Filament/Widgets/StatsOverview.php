@@ -3,12 +3,13 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Cleaner;
+use App\Models\CleanerAttendance;
 use App\Models\Company;
 use App\Models\Site;
 use App\Models\Task;
-use App\Models\User;
 use App\Models\UserEnrollment;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
+use Carbon\Carbon;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -46,6 +47,10 @@ class StatsOverview extends StatsOverviewWidget
 
     protected function adminStats(): array
     {
+        $total_active_cleaner_today = CleanerAttendance::whereDate('updated_at', Carbon::today())
+            ->distinct('cleaner_id')
+            ->count('cleaner_id');
+
         return [
             Stat::make('Clients', Company::count())
                 ->description('Total registered clients')
@@ -64,7 +69,7 @@ class StatsOverview extends StatsOverviewWidget
                 ->icon(Heroicon::ClipboardDocumentList)
                 ->color('primary'),
 
-            Stat::make('Today Active Cleaners', '12')
+            Stat::make('Today Active Cleaners', $total_active_cleaner_today)
                 ->description('Total Cleaners active today')
                 ->icon(Heroicon::User)
                 ->color('success'),

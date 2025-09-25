@@ -89,3 +89,5 @@ After seeding, you can log in with:
 -   Task and Inspection management
 -   Attendance and reporting
 -   Role-based access control
+
+php -d allow_url_fopen=On ~/bin/composer update --no-dev
