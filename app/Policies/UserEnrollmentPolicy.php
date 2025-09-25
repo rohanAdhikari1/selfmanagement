@@ -37,6 +37,11 @@ class UserEnrollmentPolicy
         return $authUser->can('Delete:UserEnrollment');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:UserEnrollment');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:UserEnrollment');

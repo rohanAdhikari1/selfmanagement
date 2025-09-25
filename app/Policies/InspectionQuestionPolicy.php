@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class InspectionQuestionPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:InspectionQuestion');
@@ -37,9 +37,13 @@ class InspectionQuestionPolicy
         return $authUser->can('Delete:InspectionQuestion');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:InspectionQuestion');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:InspectionQuestion');
     }
-
 }

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Inspectionreports\Tables;
 
+use App\Enums\Role;
 use App\Filament\Pages\InspestionReportDetailPage;
 use App\Models\Company;
 use App\Models\Site;
@@ -27,6 +28,13 @@ class InspectionreportsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                if (auth()->user()->hasRole(ROle::COMPANY_USER)) {
+                    $query->whereHas('site', function ($q) {
+                        $q->where('company_id', auth()->user()->company_id);
+                    });
+                }
+            })
             ->columns([
                 TextColumn::make('report_number')
                     ->sortable()
@@ -38,7 +46,7 @@ class InspectionreportsTable
                     ->searchable(),
                 TextColumn::make('site.company.name')
                     ->label('Company')
-                    ->hidden(fn() => auth()->user()->hasAnyRole(['company_user', 'site_user']))
+                    ->hidden(fn() => auth()->user()->hasAnyRole([Role::COMPANY_USER, Role::SITE_USER]))
                     ->searchable(),
                 TextColumn::make('inspection_type')
                     ->label('Inspection Type')
@@ -86,28 +94,31 @@ class InspectionreportsTable
                             ->label('Company')
                             ->placeholder('All')
                             ->options(
-                                Company::pluck('name', 'id')->all()
+                                Company::pluck('name', 'id')
                             )
                             ->reactive()
                             ->searchable()
-                            ->default(fn() => auth()->user()->company_id)
-                            ->hidden(fn() => auth()->user()->hasRole('company_user'))
+                            ->hidden(fn() => auth()->user()->hasRole(Role::COMPANY_USER))
                             ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
 
                         Select::make('site_id')
                             ->label('Site')
                             ->placeholder('All')
+                            ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 2 : 1)
                             ->options(function (callable $get) {
                                 $query = Site::query();
                                 if (filled($companyId = $get('company_id'))) {
-                                    return $query->where('company_id', $companyId)->pluck('name', 'id')->all();
+                                    return $query->where('company_id', $companyId)->pluck('name', 'id');
+                                }
+                                if (auth()->user()->hasRole(Role::COMPANY_USER) && filled($companyId = auth()->user()->company_id)) {
+                                    return $query->where('company_id', $companyId)->pluck('name', 'id');
                                 }
                                 return [];
                             })->searchable(),
                     ])
-                    ->hidden(fn() => auth()->user()->hasRole('site_user'))
+                    ->hidden(fn() => auth()->user()->hasRole(Role::SITE_USER))
                     ->columns(2)
-                    ->columnSpan(2)
+                    ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 1 : 2)
                     ->query(
                         function (Builder $query, array $data): Builder {
                             return $query

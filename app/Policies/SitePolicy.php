@@ -37,6 +37,11 @@ class SitePolicy
         return $authUser->can('Delete:Site');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:Site');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:Site');

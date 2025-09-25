@@ -34,6 +34,11 @@ class CleanerPolicy
         return $authUser->can('Delete:Cleaner');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:Cleaner');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:Cleaner');

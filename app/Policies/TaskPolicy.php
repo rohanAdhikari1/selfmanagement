@@ -37,6 +37,11 @@ class TaskPolicy
         return $authUser->can('Delete:Task');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:Task');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:Task');

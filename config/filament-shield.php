@@ -125,6 +125,7 @@ return [
             'create',
             'update',
             'delete',
+            'deleteAny',
             'reorder',
         ],
         'single_parameter_methods' => [

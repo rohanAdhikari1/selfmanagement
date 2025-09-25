@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CleanerAttendances;
 
+use App\Enums\Role;
 use App\Filament\Resources\CleanerAttendances\Pages\ManageCleanerAttendances;
 use App\Models\CleanerAttendance;
 use App\Models\Company;
@@ -142,24 +143,27 @@ class CleanerAttendanceResource extends Resource
                             )
                             ->reactive()
                             ->searchable()
-                            ->default(fn() => auth()->user()->company_id)
                             ->hidden(fn() => auth()->user()->hasRole('company_user'))
                             ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
 
                         Select::make('site_id')
                             ->label('Site')
                             ->placeholder('All')
+                            ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 2 : 1)
                             ->options(function (callable $get) {
                                 $query = Site::query();
                                 if (filled($companyId = $get('company_id'))) {
                                     return $query->where('company_id', $companyId)->pluck('name', 'id')->all();
+                                }
+                                if (auth()->user()->hasRole(Role::COMPANY_USER) && filled($companyId = auth()->user()->company_id)) {
+                                    return $query->where('company_id', $companyId)->pluck('name', 'id');
                                 }
                                 return [];
                             })->searchable(),
                     ])
                     ->hidden(fn() => auth()->user()->hasRole('site_user'))
                     ->columns(2)
-                    ->columnSpan(2)
+                    ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 1 : 2)
                     ->query(
                         function (Builder $query, array $data): Builder {
                             return $query

@@ -37,6 +37,11 @@ class CompanyPolicy
         return $authUser->can('Delete:Company');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:Company');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:Company');

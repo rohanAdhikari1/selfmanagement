@@ -37,6 +37,11 @@ class CleanerAttendancePolicy
         return $authUser->can('Delete:CleanerAttendance');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:CleanerAttendance');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:CleanerAttendance');

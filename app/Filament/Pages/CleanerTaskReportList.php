@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Filament\Pages\CleanerTaskReport as PagesCleanerTaskReport;
 use App\Models\CleanerTaskReport;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
@@ -16,7 +17,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class CleanerTaskReportList extends Page implements HasTable
 {
-    use InteractsWithTable;
+    use InteractsWithTable, HasPageShield;
 
     protected string $view = 'filament.pages.cleaner-task-report-list';
     protected static ?int $navigationSort = 6;

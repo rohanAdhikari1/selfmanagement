@@ -15,7 +15,8 @@
         "laravel/tinker": "^2.10.1",
         "malzariey/filament-daterangepicker-filter": "^4.0",
         "solution-forest/filament-simplelightbox": "^1.0",
-        "tallstackui/tallstackui": "^2.0"
+        "tallstackui/tallstackui": "^2.0",
+        "stechstudio/filament-impersonate": "^4.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

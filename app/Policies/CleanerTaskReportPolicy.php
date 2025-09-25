@@ -37,6 +37,11 @@ class CleanerTaskReportPolicy
         return $authUser->can('Delete:CleanerTaskReport');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:CleanerTaskReport');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:CleanerTaskReport');

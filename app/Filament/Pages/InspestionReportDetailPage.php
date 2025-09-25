@@ -5,13 +5,16 @@ namespace App\Filament\Pages;
 use App\Models\InspectionQuestion;
 use App\Models\Inspectionreport;
 use App\Models\Task;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
 
 class InspestionReportDetailPage extends Page
 {
-    public Inspectionreport $report;
+    use HasPageShield;
+
+    public ?Inspectionreport $report = null;
 
     public Collection $reportItems;
 
@@ -25,11 +28,14 @@ class InspestionReportDetailPage extends Page
 
     public function getTitle(): string | Htmlable
     {
-        return $this->report->title . ' Inspection Report';
+        return $this->report?->title . ' Inspection Report';
     }
 
     public function mount()
     {
+        if (!$this->report) {
+            abort(404);
+        }
         $this->tasks = Task::all();
         $this->reportItems = $this->report->items()->with(['question:id,name,total_point,task_id'])->get();
     }

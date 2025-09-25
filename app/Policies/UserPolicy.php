@@ -34,6 +34,11 @@ class UserPolicy
         return $authUser->can('Delete:User');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:User');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:User');

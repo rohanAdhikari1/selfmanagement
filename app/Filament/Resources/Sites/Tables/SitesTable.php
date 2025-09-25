@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Sites\Tables;
 
+use App\Enums\Role;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
 use Filament\Actions\Action;
@@ -29,7 +30,7 @@ class SitesTable
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('company.name')
-                    ->visible(fn($livewire) => $livewire instanceof \App\Filament\Resources\Sites\Pages\ListSites)
+                    ->visible(fn($livewire) => $livewire instanceof \App\Filament\Resources\Sites\Pages\ListSites && !auth()->user()->hasRole(Role::COMPANY_USER))
                     ->searchable(),
                 TextColumn::make('tax_id')
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -60,6 +61,7 @@ class SitesTable
                     ->label('Company')
                     ->relationship('company', 'name')
                     ->searchable()
+                    ->hidden(auth()->user()->hasRole(Role::COMPANY_USER))
                     ->preload(),
             ])
             ->recordActions([
@@ -74,7 +76,7 @@ class SitesTable
                             margin: 10,
                         );
                         $result = $writer->write($qrCode);
-                        // $base64 = $result->getDataUri();
+                        $base64 = $result->getDataUri();
                         return view('filament.actions.company-qr-code-modal', [
                             'qr' => $base64,
                             'record' => $record,

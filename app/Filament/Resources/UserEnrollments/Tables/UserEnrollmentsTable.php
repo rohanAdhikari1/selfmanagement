@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserEnrollments\Tables;
 
+use App\Enums\Role;
 use App\Models\Company;
 use App\Models\Site;
 use Filament\Actions\BulkActionGroup;
@@ -22,7 +23,7 @@ class UserEnrollmentsTable
     {
         return $table
             ->modifyQueryUsing(function ($query) {
-                if (auth()->user()->hasRole('company_user')) {
+                if (auth()->user()->hasRole(Role::COMPANY_USER)) {
                     $query->whereHas('site', function ($q) {
                         $q->where('company_id', auth()->user()->company_id);
                     });
@@ -66,8 +67,7 @@ class UserEnrollmentsTable
                             )
                             ->reactive()
                             ->searchable()
-                            ->default(fn() => auth()->user()->company_id)
-                            ->hidden(fn() => auth()->user()->hasRole('company_user'))
+                            ->hidden(fn() => auth()->user()->hasRole(Role::COMPANY_USER))
                             ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
 
                         Select::make('site_id')
@@ -77,6 +77,9 @@ class UserEnrollmentsTable
                                 $query = Site::query();
                                 if (filled($companyId = $get('company_id'))) {
                                     return $query->where('company_id', $companyId)->pluck('name', 'id')->all();
+                                }
+                                if (auth()->user()->hasRole(Role::COMPANY_USER) && filled($companyId = auth()->user()->company_id)) {
+                                    return $query->where('company_id', $companyId)->pluck('name', 'id');
                                 }
                                 return [];
                             })->searchable(),

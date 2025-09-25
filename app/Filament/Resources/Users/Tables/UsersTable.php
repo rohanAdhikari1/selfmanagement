@@ -2,15 +2,22 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use STS\FilamentImpersonate\Actions\Impersonate;
 
 class UsersTable
 {
@@ -54,62 +61,75 @@ class UsersTable
                 //
             ])
             ->recordActions([
+                Impersonate::make()
+                    ->visible(function ($record) {
+                        return (auth()->user()->hasRole('super_admin') || !($record->hasRole('admin') || $record->hasRole('super_admin'))) && auth()->user()->id !== $record->id;
+                    }),
                 ActionGroup::make([
-                    // Tables\Actions\Action::make('toggleStatus')
-                    //     ->label(fn(User $record) => $record->is_active ? 'Deactivate' : 'Activate')
-                    //     ->action(function (User $record) {
-                    //         $record->update([
-                    //             'is_active' => !$record->is_active,
-                    //         ]);
-                    //     })
-                    //     ->icon(fn(User $record) => $record->is_active ? 'heroicon-s-x-circle' : 'heroicon-s-check')
-                    //     ->color(fn(User $record) => $record->is_active ? 'danger' : 'success'),
-                    // Tables\Actions\Action::make('reset-password')
-                    //     ->visible(function ($record) {
-                    //         return auth()->user()->hasRole('super_admin') || (!($record->hasRole('admin') || $record->hasRole('super_admin')) && auth()->user()->id !== $record->id);
-                    //     })
-                    //     ->label('Reset Password')
-                    //     ->icon('heroicon-o-key')
-                    //     ->modalHeading('Reset Password')
-                    //     ->form([
-                    //         Forms\Components\TextInput::make('new_password')
-                    //             ->label('New Password')
-                    //             ->password()
-                    //             ->required()
-                    //             ->revealable()
-                    //             ->minLength(8),
-                    //         Forms\Components\TextInput::make('new_password_confirmation')
-                    //             ->label('Confirm New Password')
-                    //             ->password()
-                    //             ->revealable()
-                    //             ->required()
-                    //             ->same('new_password'),
-                    //     ])
-                    //     ->action(function ($record, $data) {
-                    //         $record->forceFill([
-                    //             'password' => Hash::make($data['new_password'])
-                    //         ])->setRememberToken(Str::random(60));
-
-                    //         $record->save();
-                    //         Notification::make()
-                    //             ->title('Password Reset successfully')
-                    //             ->success()
-                    //             ->send();
-                    //     }),
+                    Action::make('toggleStatus')
+                        ->label(fn(User $record) => $record->is_active ? 'Deactivate' : 'Activate')
+                        ->action(function (User $record) {
+                            $record->update([
+                                'is_active' => !$record->is_active,
+                            ]);
+                        })
+                        ->visible(function ($record) {
+                            return (auth()->user()->hasRole('super_admin') || !($record->hasRole('admin') || $record->hasRole('super_admin'))) && auth()->user()->id !== $record->id;
+                        })
+                        ->icon(fn(User $record) => $record->is_active ? 'heroicon-s-x-circle' : 'heroicon-s-check')
+                        ->color(fn(User $record) => $record->is_active ? 'danger' : 'success'),
+                    Action::make('reset-password')
+                        ->visible(function ($record) {
+                            return auth()->user()->hasRole('super_admin') || (!($record->hasRole('admin') || $record->hasRole('super_admin')) && auth()->user()->id !== $record->id);
+                        })
+                        ->label('Reset Password')
+                        ->icon('heroicon-o-key')
+                        ->modalHeading('Reset Password')
+                        ->schema([
+                            TextInput::make('new_password')
+                                ->label('New Password')
+                                ->password()
+                                ->required()
+                                ->revealable()
+                                ->minLength(8),
+                            TextInput::make('new_password_confirmation')
+                                ->label('Confirm New Password')
+                                ->password()
+                                ->revealable()
+                                ->required()
+                                ->same('new_password'),
+                        ])
+                        ->action(function ($record, $data) {
+                            $record->forceFill([
+                                'password' => Hash::make($data['new_password'])
+                            ])->setRememberToken(Str::random(60));
+                            $record->save();
+                            $record->notifyNow(
+                                Notification::make()
+                                    ->title('Password Has Been Reset')
+                                    ->body('Your account password was successfully reset. If you did not request this change, please contact support immediately.')
+                                    ->success()
+                                    ->toDatabase()
+                            );
+                            Notification::make()
+                                ->title('Password Reset successfully')
+                                ->success()
+                                ->send();
+                        }),
                     ViewAction::make(),
-                    // Tables\Actions\EditAction::make()->visible(function ($record) {
-                    //     return auth()->user()->hasRole('super_admin') || (!($record->hasRole('admin') || $record->hasRole('super_admin')) && auth()->user()->id !== $record->id);
-                    // }),
-                    // Tables\Actions\DeleteAction::make()
-                    //     ->visible(function ($record) {
-                    //         return (auth()->user()->hasRole('super_admin') || !($record->hasRole('admin') || $record->hasRole('super_admin'))) && auth()->user()->id !== $record->id;
-                    //     }),
+                    EditAction::make()->visible(function ($record) {
+                        return auth()->user()->hasRole('super_admin') || (!($record->hasRole('admin') || $record->hasRole('super_admin')) && auth()->user()->id !== $record->id);
+                    }),
+                    DeleteAction::make()
+                        ->visible(function ($record) {
+                            return (auth()->user()->hasRole('super_admin') || !($record->hasRole('admin') || $record->hasRole('super_admin'))) && auth()->user()->id !== $record->id;
+                        }),
                 ]),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                // BulkActionGroup::make([
+                //     DeleteBulkAction::make(),
+                // ]),
             ]);
     }
 }

@@ -8,12 +8,15 @@ use App\Models\Site;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\UserEnrollment;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverview extends StatsOverviewWidget
 {
+    use HasWidgetShield;
+
     protected function getStats(): array
     {
         if (auth()->user()->hasRole('cleaner')) {

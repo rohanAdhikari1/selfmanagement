@@ -37,6 +37,11 @@ class InspectionAnswerOptionPolicy
         return $authUser->can('Delete:InspectionAnswerOption');
     }
 
+    public function deleteAny(AuthUser $authUser): bool
+    {
+        return $authUser->can('DeleteAny:InspectionAnswerOption');
+    }
+
     public function reorder(AuthUser $authUser): bool
     {
         return $authUser->can('Reorder:InspectionAnswerOption');

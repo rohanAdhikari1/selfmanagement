@@ -6,6 +6,7 @@ use App\Livewire\CleanerReportInfoList;
 use App\Models\Cleaner;
 use App\Models\CleanerTaskReport as ModelsCleanerTaskReport;
 use App\Models\Site;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 use Illuminate\Contracts\Support\Htmlable;
@@ -13,6 +14,8 @@ use Livewire\Attributes\Url;
 
 class CleanerTaskReport extends Page
 {
+    use HasPageShield;
+
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $slug = 'cleaner-task-report';
