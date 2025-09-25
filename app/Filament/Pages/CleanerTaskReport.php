@@ -2,15 +2,15 @@
 
 namespace App\Filament\Pages;
 
-use App\Livewire\CleanerReportInfoList;
-use App\Models\Cleaner;
 use App\Models\CleanerTaskReport as ModelsCleanerTaskReport;
-use App\Models\Site;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Livewire\Attributes\Url;
+use Illuminate\Support\Facades\Storage;
 
 class CleanerTaskReport extends Page
 {
@@ -18,21 +18,32 @@ class CleanerTaskReport extends Page
 
     protected static bool $shouldRegisterNavigation = false;
 
-    protected static ?string $slug = 'cleaner-task-report';
+    protected static ?string $slug = 'cleaner-task-report/{record}';
 
     protected string $view = 'filament.pages.cleaner-task-report';
 
-    public $records;
-
-    #[Url]
-    public $cleaner;
-
-    #[Url]
-    public $site;
+    public ModelsCleanerTaskReport $record;
 
     public function getMaxContentWidth(): Width
     {
         return Width::Full;
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('report')
+                ->label('Download')
+                ->icon(Heroicon::Document)
+                ->action(function () {
+                    $path = $this->record->pdf_path;
+                    if (filled($path) && Storage::fileExists($path)) {
+                        return response()->download(Storage::temporaryUrl($path));
+                    }
+                    $this->dispatch('open-modal', id: 'report-missing');
+                })
+                ->keyBindings(['command+s', 'ctrl+s', 'command+p', 'ctrl+p',])
+        ];
     }
 
     public function getTitle(): string | Htmlable
@@ -40,10 +51,5 @@ class CleanerTaskReport extends Page
         return __('Report Page');
     }
 
-    public function mount()
-    {
-        Cleaner::findOrFail($this->cleaner);
-        Site::findOrFail($this->site);
-        $this->records = ModelsCleanerTaskReport::where('site_id', $this->site)->where('cleaner_id', $this->cleaner)->get();
-    }
+    public function mount() {}
 }

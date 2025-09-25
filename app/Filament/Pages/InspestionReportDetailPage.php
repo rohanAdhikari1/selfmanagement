@@ -2,13 +2,15 @@
 
 namespace App\Filament\Pages;
 
-use App\Models\InspectionQuestion;
 use App\Models\Inspectionreport;
 use App\Models\Task;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class InspestionReportDetailPage extends Page
 {
@@ -25,6 +27,23 @@ class InspestionReportDetailPage extends Page
     protected static ?string $slug = 'inspection-report-detail/{report}';
 
     protected string $view = 'filament.pages.inspestion-resport-detail-page';
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('report')
+                ->label('Download')
+                ->icon(Heroicon::Document)
+                ->action(function () {
+                    $path = $this->report->pdf_path;
+                    if (filled($path) && Storage::fileExists($path)) {
+                        return response()->download(Storage::temporaryUrl($path));
+                    }
+                    $this->dispatch('open-modal', id: 'report-missing');
+                })
+                ->keyBindings(['command+s', 'ctrl+s', 'command+p', 'ctrl+p',])
+        ];
+    }
 
     public function getTitle(): string | Htmlable
     {
@@ -44,7 +63,7 @@ class InspestionReportDetailPage extends Page
     {
         $total = $this->reportItems->sum('question.total_point');
         $obtained_points = $this->reportItems->sum('obtained_point');
-        $percentage = number_format(($obtained_points / $total) * 100, 2);
+        $percentage = $total > 0 ? number_format(($obtained_points / $total) * 100, 2) : 'N/A';
         return "$obtained_points/$total ($percentage%)";
     }
 }

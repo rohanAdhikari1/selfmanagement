@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class InspectionreportResource extends Resource
 {
@@ -23,6 +24,8 @@ class InspectionreportResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentCheck;
 
     protected static ?string $modelLabel = 'Inspection Report';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Report Management';
 
     protected static ?string $recordTitleAttribute = 'title';
 

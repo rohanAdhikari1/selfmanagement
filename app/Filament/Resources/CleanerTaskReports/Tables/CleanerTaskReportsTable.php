@@ -3,13 +3,16 @@
 namespace App\Filament\Resources\CleanerTaskReports\Tables;
 
 use App\Enums\Role;
+use App\Filament\Pages\CleanerTaskReport;
 use App\Models\Company;
 use App\Models\Site;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
@@ -121,6 +124,9 @@ class CleanerTaskReportsTable
                     ->defaultThisMonth(),
             ], layout: FiltersLayout::AboveContentCollapsible)
             ->recordActions([
+                Action::make('report')
+                    ->icon(Heroicon::Document)
+                    ->url(fn($record) => CleanerTaskReport::getUrl(['record' => $record])),
                 ViewAction::make(),
                 EditAction::make(),
             ])

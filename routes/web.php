@@ -8,3 +8,6 @@ Route::middleware('auth:sanctum', 'verified')->group(function () {
     Route::get('/startInspection', Inspection::class)->name('inspection.start');
     Route::get('/inspection/{report}', InspectionSurvey::class)->name('inspection.survey');
 });
+Route::get('/check', function () {
+    return view('inspect-report-template');
+});

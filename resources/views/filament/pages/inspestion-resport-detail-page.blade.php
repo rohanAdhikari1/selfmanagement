@@ -86,7 +86,25 @@
             </a>
         </div>
     </div>
+    <x-filament::modal id="report-missing">
+        <x-slot name="heading">
+            Report PDF not ready
+        </x-slot>
 
+        <x-slot name="description">
+            <div class="text-center">The report is still being prepared. Please wait a moment and try again later, or
+                contact the
+                administrator.</div>
+        </x-slot>
+
+        <x-slot name="footer">
+            <div class="flex justify-center items-center">
+                <x-filament::button color="primary" x-on:click="$dispatch('close-modal', {id: 'report-missing' })">
+                    OK
+                </x-filament::button>
+            </div>
+        </x-slot>
+    </x-filament::modal>
 
 </x-filament-panels::page>
 @assets
