@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('inspectionreports', function (Blueprint $table) {
             $table->longText('inspector_signature')->nullable()->after('is_draft');
+            $table->string('pdf_path')->nullable()->after('inspector_signature');
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('inspectionreports', function (Blueprint $table) {
-            $table->dropColumn('inspector_signature');
+            $table->dropColumn(['inspector_signature', 'pdf_path']);
         });
     }
 };

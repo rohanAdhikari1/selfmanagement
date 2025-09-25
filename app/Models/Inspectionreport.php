@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\DataManagerTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Inspectionreport extends Model
 {
@@ -24,6 +25,7 @@ class Inspectionreport extends Model
         'is_draft',
         'inspectionreport_id',
         'inspector_signature',
+        'pdf_path',
         'created_by',
         'updated_by',
     ];
@@ -41,6 +43,11 @@ class Inspectionreport extends Model
 
             $newNumber = $number + 1;
             $report->report_number = 'REP-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        });
+        static::deleting(function ($report) {
+            if ($report->pdf_path && Storage::exists($report->pdf_path)) {
+                Storage::delete($report->pdf_path);
+            }
         });
     }
 

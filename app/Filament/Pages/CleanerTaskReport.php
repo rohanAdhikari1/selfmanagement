@@ -5,7 +5,6 @@ namespace App\Filament\Pages;
 use App\Models\CleanerTaskReport as ModelsCleanerTaskReport;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -38,7 +37,7 @@ class CleanerTaskReport extends Page
                 ->action(function () {
                     $path = $this->record->pdf_path;
                     if (filled($path) && Storage::fileExists($path)) {
-                        return response()->download(Storage::temporaryUrl($path));
+                        return response()->download(Storage::path($path));;
                     }
                     $this->dispatch('open-modal', id: 'report-missing');
                 })
