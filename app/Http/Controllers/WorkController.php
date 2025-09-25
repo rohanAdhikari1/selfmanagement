@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CleanerAttendance;
 use App\Models\CleanerTaskReport;
+use App\Models\CleanerTaskReportItem;
 use App\Models\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class WorkController extends Controller
             ]);
         }
         $site_id = $attendance?->enrollment?->site_id;
-        if (!$attendance) {
+        if (!$site_id) {
             return response()->json([
                 'status'   => false,
                 'error'   => "Error!",
@@ -49,10 +50,13 @@ class WorkController extends Controller
         }
         DB::beginTransaction();
         try {
-            $report = CleanerTaskReport::create([
+            $report = CleanerTaskReport::firstOrCreate([
                 'cleaner_id' => $userId,
                 'site_id' => $site_id,
                 'attendance_id' => $attendance->id,
+            ]);
+            $reportItem = CleanerTaskReport::create([
+                'report_id' => $report->id,
                 'task_id' => $request->task_id,
                 'start_time' => Carbon::now(),
             ]);
@@ -61,15 +65,15 @@ class WorkController extends Controller
                     $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                     $path = $file->storeAs('report_images/finish', $uniqueFileName);
                     Image::create([
-                        'title' => $report->task->name . ' Before Image',
-                        'description' => $report->task->name . ' Before image for report',
+                        'title' => $reportItem->task->name . ' Before Image',
+                        'description' => $reportItem->task->name . ' Before image for report',
                         'file_path' => $path,
                         'file_name' => $uniqueFileName,
                         'file_size' => $file->getSize(),
                         'longitude' => $request->longitude,
                         'latitude' => $request->latitude,
-                        'model_type' => CleanerTaskReport::class,
-                        'model_id' => $report->id,
+                        'model_type' => CleanerTaskReportItem::class,
+                        'model_id' => $reportItem->id,
                         'is_before' => true
                     ]);
                 }
@@ -101,7 +105,7 @@ class WorkController extends Controller
         ]);
         DB::beginTransaction();
         try {
-            $report = CleanerTaskReport::findOrFail($request->report_id);
+            $report = CleanerTaskReportItem::findOrFail($request->report_id);
             $report->finish_time = Carbon::now();
             $report->save();
 
@@ -110,14 +114,14 @@ class WorkController extends Controller
                     $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                     $path = $file->storeAs('report_images/finish', $uniqueFileName);
                     Image::create([
-                        'title' => $report->task->name . 'Completion Image',
-                        'description' => $report->task->name . 'Completion image for report',
+                        'title' => $report->report?->task->name . 'Completion Image',
+                        'description' => $report->report?->task->name . 'Completion image for report',
                         'file_path' => $path,
                         'file_name' => $uniqueFileName,
                         'file_size' => $file->getSize(),
                         'longitude' => $request->longitude,
                         'latitude' => $request->latitude,
-                        'model_type' => CleanerTaskReport::class,
+                        'model_type' => CleanerTaskReportItem::class,
                         'model_id' => $report->id,
                         'is_before' => false
                     ]);

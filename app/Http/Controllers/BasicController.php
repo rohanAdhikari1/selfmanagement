@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CleanerAttendance;
 use App\Models\CleanerTaskReport;
+use App\Models\CleanerTaskReportItem;
 use App\Models\Site;
 use App\Models\Task;
 use App\Models\UserEnrollment;
@@ -31,8 +32,10 @@ class BasicController extends Controller
         if ($attendanceId) {
             $tasks = Task::all();
             $data = $tasks->map(function ($task) use ($attendanceId) {
-                $report = CleanerTaskReport::where('task_id', $task->id)
-                    ->where('attendance_id', $attendanceId)
+                $report = CleanerTaskReportItem::where('task_id', $task->id)
+                    ->whereHas('report', function ($q) use ($attendanceId) {
+                        $q->where('attendance_id', $attendanceId);
+                    })
                     ->first();
                 return [
                     'id' => $task->id,

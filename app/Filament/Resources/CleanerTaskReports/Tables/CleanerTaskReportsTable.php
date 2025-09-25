@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources\CleanerTaskReports\Tables;
 
-use App\Models\CleanerTaskReport;
+use App\Enums\Role;
 use App\Models\Company;
 use App\Models\Site;
-use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -25,16 +24,16 @@ class CleanerTaskReportsTable
     {
         return $table
             ->modifyQueryUsing(function ($query) {
-                if (auth()->user()->hasRole('company_user')) {
+                if (auth()->user()->hasRole(Role::COMPANY_USER)) {
                     $query->whereHas('site', function ($q) {
                         $q->where('company_id', auth()->user()->company_id);
                     });
                 }
             })
             ->columns([
-                TextColumn::make('task.name')
-                    ->searchable(),
                 TextColumn::make('cleaner.full_name')
+                    ->searchable(),
+                TextColumn::make('site.company.name')
                     ->searchable(),
                 TextColumn::make('site.name')
                     ->searchable(),
@@ -65,7 +64,7 @@ class CleanerTaskReportsTable
                             ->reactive()
                             ->searchable()
                             ->default(fn() => auth()->user()->company_id)
-                            ->hidden(fn() => auth()->user()->hasRole('company_user'))
+                            ->hidden(fn() => auth()->user()->hasRole(Role::COMPANY_USER))
                             ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
 
                         Select::make('site_id')
@@ -79,7 +78,7 @@ class CleanerTaskReportsTable
                                 return [];
                             })->searchable(),
                     ])
-                    ->hidden(fn() => auth()->user()->hasRole('site_user'))
+                    ->hidden(fn() => auth()->user()->hasRole(Role::SITE_USER))
                     ->columns(2)
                     ->columnSpan(2)
                     ->query(
@@ -121,7 +120,6 @@ class CleanerTaskReportsTable
                     ->placeholder('All')
                     ->defaultThisMonth(),
             ], layout: FiltersLayout::AboveContentCollapsible)
-            ->defaultGroup('cleaner.full_name')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

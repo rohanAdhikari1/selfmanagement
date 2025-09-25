@@ -13,16 +13,10 @@ return new class extends Migration
     {
         Schema::create('cleaner_task_reports', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_id')->nullable()->constrained('tasks')->onDelete('set null');
             $table->foreignId('cleaner_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('site_id')->nullable()->constrained('sites')->onDelete('set null');
             $table->foreignId('attendance_id')->nullable()->constrained('cleaner_attendances')->onDelete('set null');
-            $table->timestamp('start_time');
-            $table->timestamp('finish_time')->nullable();
-            $table->string('start_longitude')->nullable();
-            $table->string('start_latitude')->nullable();
-            $table->string('finish_longitude')->nullable();
-            $table->string('finish_latitude')->nullable();
+            $table->string('pdf_path')->nullable();
             $table->timestamps();
         });
     }
