@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Jobs\GenerateInspectreportPdf;
 use App\Models\Image;
 use App\Models\InspectionAnswerOption;
 use App\Models\InspectionQuestion;
@@ -92,9 +93,6 @@ class InspectionSurvey extends Component
             $rules["items.$questionId.answer_id"] = 'required';
         }
         $this->validate($rules);
-        $this->report->inspector_signature = $this->signature;
-        $this->report->is_draft = false;
-        $this->report->save();
         $this->dialog()
             ->warning('Warning!', 'Are you sure to submit the inspection?')
             ->confirm(method: 'reDirectAll')
@@ -104,6 +102,10 @@ class InspectionSurvey extends Component
 
     public function reDirectAll()
     {
+        $this->report->inspector_signature = $this->signature;
+        $this->report->is_draft = false;
+        $this->report->save();
+        GenerateInspectreportPdf::dispatch($this->report, auth()->user());
         $this->js(" const message = { action: 'finish' };
         if (window.FlutterChannel && FlutterChannel.postMessage) {
             FlutterChannel.postMessage(JSON.stringify(message));

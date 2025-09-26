@@ -37,6 +37,9 @@ class CleanerTaskReportsTable
                 }
             })
             ->columns([
+                TextColumn::make('report_number')
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('cleaner.full_name')
                     ->searchable(),
                 TextColumn::make('site.company.name')

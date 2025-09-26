@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CleanerTaskReports;
 
+use App\Filament\Pages\CleanerTaskReport as PagesCleanerTaskReport;
 use App\Filament\Resources\CleanerTaskReports\Pages\CreateCleanerTaskReport;
 use App\Filament\Resources\CleanerTaskReports\Pages\EditCleanerTaskReport;
 use App\Filament\Resources\CleanerTaskReports\Pages\ListCleanerTaskReports;
@@ -15,13 +16,29 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
 
 class CleanerTaskReportResource extends Resource
 {
     protected static ?string $model = CleanerTaskReport::class;
 
-    // protected static ?int $navigationSort = 6;
+    protected static ?string $recordTitleAttribute = 'report_number';
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Cleaner' => $record->cleaner?->full_name,
+            'Site' => $record->site?->name,
+        ];
+    }
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return PagesCleanerTaskReport::getUrl(['record' => $record]);
+    }
+
+    protected static int $globalSearchResultsLimit = 10;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ReceiptPercent;
 

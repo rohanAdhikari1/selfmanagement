@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Inspectionreports;
 
+use App\Filament\Pages\InspestionReportDetailPage;
 use App\Filament\Resources\Inspectionreports\Pages\CreateInspectionreport;
 use App\Filament\Resources\Inspectionreports\Pages\EditInspectionreport;
 use App\Filament\Resources\Inspectionreports\Pages\ListInspectionreports;
@@ -15,6 +16,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
 use UnitEnum;
 
 class InspectionreportResource extends Resource
@@ -24,6 +28,21 @@ class InspectionreportResource extends Resource
     protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentCheck;
 
     protected static ?string $modelLabel = 'Inspection Report';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['report_number'];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        return new HtmlString($record->report_number . '<br>' . $record->title);
+    }
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return InspestionReportDetailPage::getUrl(['report' => $record]);
+    }
 
     protected static string|UnitEnum|null $navigationGroup = 'Report Management';
 

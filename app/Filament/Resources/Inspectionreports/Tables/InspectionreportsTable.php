@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Inspectionreports\Tables;
 
 use App\Enums\Role;
 use App\Filament\Pages\InspestionReportDetailPage;
+use App\Jobs\GenerateInspectreportPdf;
 use App\Models\Company;
 use App\Models\Site;
 use Filament\Actions\Action;
@@ -11,7 +12,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -171,6 +174,17 @@ class InspectionreportsTable
                 Action::make('report')
                     ->icon(Heroicon::Document)
                     ->url(fn($record) => InspestionReportDetailPage::getUrl(['report' => $record])),
+                Action::make('create_file')
+                    ->label('Generate Report File')
+                    ->icon(Heroicon::ArrowDownCircle)
+                    ->visible(fn() => auth()->user()->hasAnyRole([Role::SUPER_ADMIN, Role::ADMIN]))
+                    ->action(function ($record) {
+                        GenerateInspectreportPdf::dispatch($record, Filament::auth()->user());
+                        Notification::make()
+                            ->title('Generate Request is Made.')
+                            ->success()
+                            ->send();
+                    }),
                 ViewAction::make(),
                 EditAction::make(),
             ])

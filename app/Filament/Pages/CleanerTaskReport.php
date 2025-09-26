@@ -37,7 +37,7 @@ class CleanerTaskReport extends Page
                 ->action(function () {
                     $path = $this->record->pdf_path;
                     if (filled($path) && Storage::fileExists($path)) {
-                        return response()->download(Storage::path($path));;
+                        return response()->download(Storage::path($path));
                     }
                     $this->dispatch('open-modal', id: 'report-missing');
                 })

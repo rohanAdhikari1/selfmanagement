@@ -2,9 +2,12 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\Role;
 use App\Models\Cleaner;
 use App\Models\CleanerAttendance;
+use App\Models\CleanerTaskReport;
 use App\Models\Company;
+use App\Models\Inspectionreport;
 use App\Models\Site;
 use App\Models\Task;
 use App\Models\UserEnrollment;
@@ -20,11 +23,11 @@ class StatsOverview extends StatsOverviewWidget
 
     protected function getStats(): array
     {
-        if (auth()->user()->hasRole('cleaner')) {
+        if (auth()->user()->hasRole(Role::CLEANER)) {
             return $this->userStats();
-        } elseif (auth()->user()->hasRole('site_user')) {
+        } elseif (auth()->user()->hasRole(Role::SITE_USER)) {
             return $this->siteStats();
-        } elseif (auth()->user()->hasRole('company_user')) {
+        } elseif (auth()->user()->hasRole(Role::COMPANY_USER)) {
             return $this->clientStats();
         } else {
             return $this->adminStats();
@@ -37,7 +40,7 @@ class StatsOverview extends StatsOverviewWidget
             return ['@xl' => 3];
         } elseif (auth()->user()->hasRole('site_user')) {
             return ['@xl' => 3];
-        } elseif (auth()->user()->hasRole('company_user')) {
+        } elseif (auth()->user()->hasRole(Role::COMPANY_USER)) {
             return ['@xl' => 3];
         } else {
             return ['@xl' => 4];
@@ -50,6 +53,14 @@ class StatsOverview extends StatsOverviewWidget
         $total_active_cleaner_today = CleanerAttendance::whereDate('updated_at', Carbon::today())
             ->distinct('cleaner_id')
             ->count('cleaner_id');
+
+        $total_inspected_sites_today = Inspectionreport::whereDate('created_at', Carbon::today())
+            ->distinct('site_id')
+            ->count('site_id');
+
+        $total_worked_sites_today = CleanerTaskReport::whereDate('created_at', Carbon::today())
+            ->distinct('site_id')
+            ->count('site_id');
 
         return [
             Stat::make('Clients', Company::count())
@@ -68,9 +79,20 @@ class StatsOverview extends StatsOverviewWidget
                 ->description('Total Tasks')
                 ->icon(Heroicon::ClipboardDocumentList)
                 ->color('primary'),
-
             Stat::make('Today Active Cleaners', $total_active_cleaner_today)
                 ->description('Total Cleaners active today')
+                ->icon(Heroicon::User)
+                ->color('success'),
+            Stat::make('Today Inspected Sites', $total_inspected_sites_today)
+                ->description('Total Sites Inspected today')
+                ->icon(Heroicon::BuildingOffice)
+                ->color('success'),
+            Stat::make('Today Worked Sites', $total_worked_sites_today)
+                ->description('Total Sites Worked today')
+                ->icon(Heroicon::BuildingOffice2)
+                ->color('success'),
+            Stat::make('Today Worked Sites', $total_worked_sites_today)
+                ->description('Total Sites Worked today')
                 ->icon(Heroicon::User)
                 ->color('success'),
         ];

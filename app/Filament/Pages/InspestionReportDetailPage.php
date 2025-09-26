@@ -37,7 +37,7 @@ class InspestionReportDetailPage extends Page
                 ->action(function () {
                     $path = $this->report->pdf_path;
                     if (filled($path) && Storage::fileExists($path)) {
-                        return response()->download(Storage::temporaryUrl($path));
+                        return response()->download(Storage::path($path));
                     }
                     $this->dispatch('open-modal', id: 'report-missing');
                 })
