@@ -17,7 +17,7 @@ class InspectionReportWidget extends TableWidget
 {
     use HasWidgetShield;
 
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 9;
 
     protected int | string | array $columnSpan = 'full';
 

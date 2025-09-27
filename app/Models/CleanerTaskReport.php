@@ -56,4 +56,9 @@ class CleanerTaskReport extends Model
     {
         return $this->hasMany(CleanerTaskReportItem::class, 'report_id');
     }
+
+    public function attendance()
+    {
+        return $this->belongsTo(CleanerAttendance::class, 'attendance_id');
+    }
 }

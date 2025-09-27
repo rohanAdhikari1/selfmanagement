@@ -11,8 +11,11 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Support\Assets\Js;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Platform;
+use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -59,6 +62,10 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->collapsedSidebarWidth('9rem')
             ->databaseNotifications()
+            ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn(): View => view('session-expired-modal'),
+            )
             ->plugins([
                 SimpleLightBoxPlugin::make(),
                 FilamentShieldPlugin::make()->gridColumns([
@@ -76,6 +83,9 @@ class AdminPanelProvider extends PanelProvider
                         'default' => 1,
                         'sm' => 2,
                     ]),
+            ])
+            ->assets([
+                Js::make('filament-expiration-notice-scripts', resource_path('js/filament-expire-notice.js')),
             ])
             ->globalSearchFieldSuffix(fn(): ?string => match (Platform::detect()) {
                 Platform::Windows, Platform::Linux => 'CTRL+K',

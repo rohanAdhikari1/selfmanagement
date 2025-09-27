@@ -2,6 +2,7 @@
 
 use App\Livewire\Inspection;
 use App\Livewire\InspectionSurvey;
+use App\Models\CleanerTaskReport;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum', 'verified')->group(function () {
@@ -10,4 +11,8 @@ Route::middleware('auth:sanctum', 'verified')->group(function () {
 });
 Route::get('/check', function () {
     return view('inspect-report-template');
+});
+Route::get('/task', function () {
+    $record = CleanerTaskReport::where('report_number', 'REP-0001')->first();
+    return view('task-report-template', ['record' => $record]);
 });
