@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\CleanerAttendance;
-use App\Models\CleanerTaskReport;
 use App\Models\CleanerTaskReportItem;
 use App\Models\Site;
 use App\Models\Task;

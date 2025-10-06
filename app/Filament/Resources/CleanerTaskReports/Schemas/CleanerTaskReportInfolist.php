@@ -58,10 +58,18 @@ class CleanerTaskReportInfolist
                         ImageEntry::make('images_before.file_path')
                             ->label('Before')
                             ->stacked()
+                            ->extraImgAttributes([
+                                'alt' => 'Before Image',
+                                'loading' => 'lazy',
+                            ])
                             ->imageHeight(200),
                         ImageEntry::make('images_after.file_path')
                             ->label('After')
                             ->stacked()
+                            ->extraImgAttributes([
+                                'alt' => 'After Image',
+                                'loading' => 'lazy',
+                            ])
                             ->imageHeight(200),
                     ])->columns(2)
                     ->columnSpanFull(),

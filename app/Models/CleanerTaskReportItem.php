@@ -21,7 +21,7 @@ class CleanerTaskReportItem extends Model
 
     public function report()
     {
-        return $this->belongsTo(Task::class, 'report_id');
+        return $this->belongsTo(CleanerTaskReport::class, 'report_id');
     }
 
     public function task()

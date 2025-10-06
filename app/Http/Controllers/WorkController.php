@@ -145,6 +145,7 @@ class WorkController extends Controller
 
     public function workHistory()
     {
+        //TODO:
         $userId = auth()->id();
         if (!$userId) {
             return response()->json([
@@ -152,16 +153,9 @@ class WorkController extends Controller
                 'error' => 'User Not Found.'
             ], 404);
         }
-        $cleaner_task_report = CleanerTaskReport::whereNotNull('finish_time')
-            ->where('cleaner_id', $userId)
-            ->select(
-                'site_id',
-                'attendance_id',
-                DB::raw('DATE(finish_time) as finish_date')
-            )
+        $cleaner_task_report = CleanerTaskReport::where('cleaner_id', $userId)
             ->with('site:id,name')
-            ->groupBy('site_id', 'attendance_id', DB::raw('DATE(finish_time)'))
-            ->orderBy('finish_date')
+            ->orderBy('created_at', 'desc')
             ->get();
         return response()->json([
             'status' => true,
