@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 
 class CleanerTaskReport extends Model
 {
-
     public function getRouteKeyName()
     {
         return 'report_number';

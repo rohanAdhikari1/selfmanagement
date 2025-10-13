@@ -47,8 +47,7 @@ class InspectionReportWidget extends TableWidget
                 // TextColumn::make('inspection_type')
                 //     ->label('Inspection Type'),
                 TextColumn::make('frequency')
-                    ->label('Frequency')
-                    ->searchable(),
+                    ->label('Frequency'),
                 IconColumn::make('is_active')
                     ->boolean()
                     ->label('Active'),

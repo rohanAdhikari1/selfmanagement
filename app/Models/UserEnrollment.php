@@ -23,6 +23,11 @@ class UserEnrollment extends Model
         return $this->belongsTo(Site::class, 'site_id');
     }
 
+    public function activeCleaner()
+    {
+        return $this->belongsTo(Cleaner::class, 'user_id')->where('is_active', true);
+    }
+
     public function cleaner()
     {
         return $this->belongsTo(Cleaner::class, 'user_id');

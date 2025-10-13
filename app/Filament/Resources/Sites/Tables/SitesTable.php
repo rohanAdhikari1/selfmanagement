@@ -43,10 +43,8 @@ class SitesTable
                     ->label('Email')
                     ->searchable(),
                 TextColumn::make('creator_name')
-                    ->searchable()
                     ->sortable(),
                 TextColumn::make('updator_name')
-                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 TextColumn::make('created_at')

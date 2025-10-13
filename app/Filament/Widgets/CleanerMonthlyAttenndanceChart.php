@@ -3,12 +3,15 @@
 namespace App\Filament\Widgets;
 
 use App\Models\CleanerAttendance;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
 class CleanerMonthlyAttenndanceChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'Cleaner Monthly Attendance Chart';
 
     protected static ?int $sort = 3;

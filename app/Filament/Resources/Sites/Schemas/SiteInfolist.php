@@ -21,9 +21,11 @@ class SiteInfolist
                     ->visible(fn($livewire) => $livewire instanceof \App\Filament\Resources\Sites\Pages\ViewSite),
                 TextEntry::make('tax_id'),
                 TextEntry::make('phone')
+                    ->copyable()
                     ->icon(Heroicon::Phone)
                     ->iconColor('primary'),
                 TextEntry::make('email')
+                    ->copyable()
                     ->icon(Heroicon::Envelope)
                     ->iconColor('primary')
                     ->label('Email address'),

@@ -24,6 +24,7 @@ class InspectionController extends Controller
                 'site_name' => $ins->site?->name,
                 'frequency' => $ins->frequency,
                 'date' => $ins->created_at,
+                'report_number' => $ins->report_number,
             ];
         });
         return response()->json([

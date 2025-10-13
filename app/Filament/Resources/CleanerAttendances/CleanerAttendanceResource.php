@@ -30,12 +30,15 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Malzariey\FilamentDaterangepickerFilter\Filters\DateRangeFilter;
+use UnitEnum;
 
 class CleanerAttendanceResource extends Resource
 {
     protected static ?string $model = CleanerAttendance::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::CalendarDays;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Basic';
 
     protected static ?int $navigationSort = 5;
 
@@ -68,7 +71,7 @@ class CleanerAttendanceResource extends Resource
             ->components([
                 TextEntry::make('cleaner.full_name')
                     ->numeric(),
-                TextEntry::make('enrollment.site.compnay.name')
+                TextEntry::make('enrollment.site.name')
                     ->hidden(fn() => auth()->user()->hasRole('company_user'))
                     ->label('Site'),
                 TextEntry::make('start_time')

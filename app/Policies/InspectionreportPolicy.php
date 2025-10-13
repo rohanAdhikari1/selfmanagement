@@ -11,7 +11,7 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class InspectionreportPolicy
 {
     use HandlesAuthorization;
-
+    
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Inspectionreport');
@@ -46,4 +46,5 @@ class InspectionreportPolicy
     {
         return $authUser->can('Reorder:Inspectionreport');
     }
+
 }

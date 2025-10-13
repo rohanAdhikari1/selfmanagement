@@ -3,11 +3,14 @@
 namespace App\Filament\Widgets;
 
 use App\Models\UserEnrollment;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
 class CleanerEnrollmentPerSiteChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'Cleaner Enrollment Per Site Chart';
 
     protected static ?int $sort = 4;

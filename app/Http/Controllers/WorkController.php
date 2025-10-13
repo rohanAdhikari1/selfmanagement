@@ -55,7 +55,7 @@ class WorkController extends Controller
                 'site_id' => $site_id,
                 'attendance_id' => $attendance->id,
             ]);
-            $reportItem = CleanerTaskReport::create([
+            $reportItem = CleanerTaskReportItem::create([
                 'report_id' => $report->id,
                 'task_id' => $request->task_id,
                 'start_time' => Carbon::now(),
@@ -82,7 +82,7 @@ class WorkController extends Controller
             return response()->json([
                 'status' => true,
                 'result' => "Successfully marked task as started!",
-                'report_id' => $report->id
+                'report_id' => $reportItem->id
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -98,7 +98,7 @@ class WorkController extends Controller
     public function finishWork(Request $request)
     {
         $request->validate([
-            'report_id' => 'required',
+            'report_id' => 'required|integer',
             'files.*' => 'required|file|mimes:png|max:10240',
             'longitude' => 'required|string',
             'latitude' => 'required|string',
@@ -114,8 +114,8 @@ class WorkController extends Controller
                     $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                     $path = $file->storeAs('report_images/finish', $uniqueFileName);
                     Image::create([
-                        'title' => $report->report?->task->name . 'Completion Image',
-                        'description' => $report->report?->task->name . 'Completion image for report',
+                        'title' => $report->task?->name . ' Completion Image',
+                        'description' => $report->task?->name . ' Completion image for report',
                         'file_path' => $path,
                         'file_name' => $uniqueFileName,
                         'file_size' => $file->getSize(),
@@ -145,7 +145,6 @@ class WorkController extends Controller
 
     public function workHistory()
     {
-        //TODO:
         $userId = auth()->id();
         if (!$userId) {
             return response()->json([
@@ -154,12 +153,29 @@ class WorkController extends Controller
             ], 404);
         }
         $cleaner_task_report = CleanerTaskReport::where('cleaner_id', $userId)
-            ->with('site:id,name')
-            ->orderBy('created_at', 'desc')
+            ->with(['site:id,name', 'attendance:id,start_time,end_time'])
+            ->orderBy('updated_at', 'desc')
             ->get();
+        $data = $cleaner_task_report->map(function ($report) {
+            return [
+                'id' => $report->id,
+                'site_name' => $report->site->name ?? 'N/A',
+                'attendance_start_time' => $report->attendance->start_time ?? 'N/A',
+                'attendance_end_time' => $report->attendance->end_time ?? 'N/A',
+                // 'tasks' => $report->items->map(function ($item) {
+                //     return [
+                //         'task_name' => $item->task->name ?? 'N/A',
+                //         'start_time' => $item->start_time,
+                //         'finish_time' => $item->finish_time,
+                //         'status' => $item->finish_time ? 'Completed' : 'In Progress',
+                //     ];
+                // }),
+                'date' => Carbon::parse($report->updated_at)->format('Y-m-d'),
+            ];
+        });
         return response()->json([
             'status' => true,
-            'result' => $cleaner_task_report,
+            'result' => $data,
         ]);
     }
 }

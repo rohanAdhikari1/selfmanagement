@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CleanerAttendance;
 use App\Models\CleanerTaskReportItem;
 use App\Models\Site;
+use App\Models\SiteTaskException;
 use App\Models\Task;
 use App\Models\UserEnrollment;
 use Carbon\Carbon;
@@ -23,13 +24,25 @@ class BasicController extends Controller
             ], 404);
         }
 
-        $attendanceId = CleanerAttendance::whereNull('end_time')
+        $attendance = CleanerAttendance::whereNull('end_time')
+            ->select('id', 'enrollment_id')
             ->where('cleaner_id', $userId)
-            ->value('id');
-
-
-        if ($attendanceId) {
-            $tasks = Task::all();
+            ->with('enrollment:id,site_id')
+            ->first();
+        if ($attendance) {
+            $attendanceId = $attendance->id;
+            $site = $attendance->enrollment?->site_id;
+            if (!$site) {
+                return response()->json([
+                    'status'   => false,
+                    'is_online' => (bool) $attendanceId,
+                    'error'   => "No Site Assigned!",
+                    'message'   => "Something went wrong!"
+                ]);
+            }
+            $exclude_task_ids = SiteTaskException::where('site_id', $site)->pluck('task_id');
+            $tasks = Task::whereNotIn('id', $exclude_task_ids)
+                ->get();
             $data = $tasks->map(function ($task) use ($attendanceId) {
                 $report = CleanerTaskReportItem::where('task_id', $task->id)
                     ->whereHas('report', function ($q) use ($attendanceId) {
@@ -53,7 +66,7 @@ class BasicController extends Controller
 
         return response()->json([
             'status'   => true,
-            'is_online' => (bool) $attendanceId,
+            'is_online' => (bool) $attendance,
             'result'   => $data
         ]);
     }
@@ -76,12 +89,21 @@ class BasicController extends Controller
 
         $attendance = CleanerAttendance::whereNull('end_time')
             ->where('cleaner_id', $userId)
+            ->with('enrollment:id,site_id', 'enrollment.site:id,uid')
             ->first();
         $file = $request->file('file');
         $uniqueFileName = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
         $path = $file->storeAs('attendance_images', $uniqueFileName);
 
         if ($attendance) {
+            $site = $attendance->enrollment?->site?->uid;
+            if (!$site || $site != $request->company_uid) {
+                return response()->json([
+                    'status'   => false,
+                    'error'   => "Access Denied!",
+                    'message'   => "Your are not enrolled for this. Please scan qr of site you are currently active!"
+                ]);
+            }
             $attendance->end_time = Carbon::now();
             $attendance->exit_longitude = $request->longitude;
             $attendance->exit_latitude = $request->latitude;

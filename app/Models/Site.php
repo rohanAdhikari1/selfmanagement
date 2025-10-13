@@ -34,6 +34,11 @@ class Site extends Model
         });
     }
 
+    public function enrollments()
+    {
+        return $this->hasMany(UserEnrollment::class, 'site_id');
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');

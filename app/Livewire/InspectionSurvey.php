@@ -8,6 +8,7 @@ use App\Models\InspectionAnswerOption;
 use App\Models\InspectionQuestion;
 use App\Models\Inspectionreport;
 use App\Models\InspectionreportItem;
+use App\Models\SiteInspectionQuestionException;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -120,7 +121,10 @@ class InspectionSurvey extends Component
 
     public function loadDraft()
     {
-        $this->questions = InspectionQuestion::with('task')->get()->toArray();
+        $ecpquestion = SiteInspectionQuestionException::where('site_id', $this->report->site_id)
+            ->pluck('question_id')
+            ->toArray();
+        $this->questions = InspectionQuestion::with('task')->whereNotIn('id', $ecpquestion)->get()->toArray();
         foreach ($this->questions as $q) {
             $existing = InspectionreportItem::where('inspectionreport_id', $this->report->id)
                 ->where('question_id', $q['id'])

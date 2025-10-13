@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\Cleaners\Tables;
 
+use App\Models\Cleaner;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -45,8 +48,19 @@ class CleanersTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    Action::make('toggleStatus')
+                        ->label(fn(Cleaner $record) => $record->is_active ? 'Deactivate' : 'Activate')
+                        ->action(function (Cleaner $record) {
+                            $record->update([
+                                'is_active' => !$record->is_active,
+                            ]);
+                        })
+                        ->icon(fn(Cleaner $record) => $record->is_active ? 'heroicon-s-x-circle' : 'heroicon-s-check')
+                        ->color(fn(Cleaner $record) => $record->is_active ? 'danger' : 'success'),
+                    ViewAction::make(),
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -1,131 +1,336 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Cleaner Task Report - {{ $record->report_number }}</title>
+    <title>Cleaning Inspection Report</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        :root {
+            --primary-color: #2563eb;
+        }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            color: #1e293b;
             margin: 0;
-            padding: 0;
-            color: #333;
+            background: #fff;
         }
 
-        .container {
-            padding: 30px;
+        .report {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
         }
 
-        .header {
-            text-align: center;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+        /* Header */
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            border-bottom: 3px solid var(--primary-color);
         }
 
-        .header h1 {
+        .header-left img {
+            height: 50px;
+            width: auto;
+        }
+
+        .header-left h1 {
             margin: 0;
-            font-size: 24px;
-            color: #4CAF50;
+            font-size: 20px;
+            color: var(--primary-color);
         }
 
-        .report-info {
-            margin-bottom: 30px;
+        .header-left p {
+            margin: 0;
+            font-size: 10px;
+            color: #475569;
         }
 
-        .report-info div {
-            margin-bottom: 8px;
+        .header-right {
+            text-align: right;
+            font-size: 10px;
+            color: #475569;
+            white-space: nowrap;
+        }
+
+        /* Overall Points */
+        .overall-points {
+            font-weight: bold;
             font-size: 14px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            background: #e0f2fe;
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 6px;
         }
 
-        .task-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        /* Task title */
+        .task-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-top: 15px;
+            margin-bottom: 6px;
         }
 
-        .task-header {
+        /* Questions Table */
+        .question-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+        }
+
+        .question-table td {
+            padding: 6px 10px;
+            vertical-align: top;
+        }
+
+        .answer-cell {
+            text-align: right;
+        }
+
+        .answer-badge {
+            color: #fff;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .excellent {
+            background-color: #16a34a;
+        }
+
+        .good {
+            background-color: #facc15;
+            color: #000;
+        }
+
+        .poor {
+            background-color: #dc2626;
+        }
+
+        /* Remarks */
+        .remarks {
+            font-size: 11px;
+            color: #475569;
+            margin: 4px 0 4px 0;
+        }
+
+        /* Question images */
+        .q-images {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .q-images img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Divider after each question */
+        .divider {
+            border: none;
+            border-bottom: 1px solid #e2e8f0;
+            margin: 4px 0;
+        }
+
+        /* Checklist */
+        .checklist {
+            margin-top: 12px;
+            margin-bottom: 12px;
+        }
+
+        .checklist h3 {
+            font-size: 13px;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+
+        .checklist ul {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 11px;
+        }
+
+        .checklist li {
+            margin-bottom: 2px;
+        }
+
+        /* Signature */
+        .signature {
+            margin-top: 12px;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: 600;
+            align-items: flex-end;
         }
 
-        .task-images {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .task-images img {
-            width: 45%;
+        .signature img {
+            width: 120px;
             height: auto;
-            border-radius: 5px;
-            border: 1px solid #ccc;
         }
 
-        .footer {
-            margin-top: 30px;
+        .signature p {
             font-size: 10px;
-            color: #777;
-            text-align: center;
+            color: #475569;
+            margin-top: 2px;
+        }
+
+        /* All images */
+        .all-images {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .all-images img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+
+        /* Footer */
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.9em;
+            color: #94a3b8;
+            width: 100%;
+            padding: 5px 10px;
+        }
+
+        .page-number:before {
+            content: "Page " counter(page) " of " counter(pages);
+            position: absolute;
+            right: 10px;
+            bottom: 5px;
+        }
+
+        .footer-left {
+            position: absolute;
+            left: 10px;
+            bottom: 5px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="report">
 
-        <div class="header">
-            <h1>Cleaner Task Report</h1>
-            <div>{{ $record->report_number }}</div>
-        </div>
-
-        <div class="report-info">
-            <div><strong>Site:</strong> {{ $record->site->name ?? 'N/A' }}</div>
-            <div><strong>Cleaner:</strong> {{ $record->cleaner->full_name ?? 'N/A' }}</div>
-            <div><strong>Entry At:</strong> {{ $record->attendance->start_time ?? 'N/A' }}</div>
-            <div><strong>Exit At:</strong> {{ $record->attendance->end_time ?? 'N/A' }}</div>
-            <div><strong>Date:</strong> {{ $record->created_at->format('Y-m-d') }}</div>
-        </div>
-
-        @foreach ($record->items as $index => $item)
-            <div class="task-card">
-                <div class="task-header">
-                    <div>Task: {{ $item->task?->name ?? '-' }}</div>
-                    <div>Start: {{ $item->start_time ?? '-' }} | Finish: {{ $item->finish_time ?? '-' }}</div>
-                </div>
-
-                @if ($item->before_image || $item->after_image)
-                    <div class="task-images">
-                        @if ($item->before_image)
-                            <div>
-                                <div><strong>Before</strong></div>
-                                <img src="{{ Storage::temporary($img->file_path) }}" alt="Before Image">
-                            </div>
-                        @endif
-                        @if ($item->after_image)
-                            <div>
-                                <div><strong>After</strong></div>
-                                <img src="{{ Storage::temporary($item->after_image->file_path) }}" alt="After Image">
-                            </div>
-                        @endif
+        <!-- Header -->
+        <table class="header-table">
+            <tr>
+                <td style="width:70%;">
+                    <table style="border-collapse:collapse;">
+                        <tr>
+                            <td style="padding-right:8px;"><img src="company-logo.png" alt="Logo"></td>
+                            <td style="vertical-align:top;">
+                                <h1>Cleaning Inspection Report</h1>
+                                <p>SparkClean Facility Services</p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="width:30%;">
+                    <div class="header-right">
+                        <p><strong>Date:</strong> Oct 12, 2025</p>
+                        <p><strong>Inspector:</strong> John Doe</p>
                     </div>
-                @endif
+                </td>
+            </tr>
+        </table>
 
-                @if ($item->remarks)
-                    <div style="margin-top:10px;"><strong>Remarks:</strong> {{ $item->remarks }}</div>
-                @endif
-            </div>
-        @endforeach
+        <!-- Overall Points -->
+        <div class="overall-points">Overall Points: 52 / 55</div>
 
-        <div class="footer">
-            Generated on {{ now()->format('d-m-Y H:i') }}
+        <!-- Task 1 -->
+        <div class="task-title">Restroom Cleaning (28 / 30)</div>
+
+        <table class="question-table">
+            <tr>
+                <td>Are sinks and counters free of stains and debris?</td>
+                <td class="answer-cell"><span class="answer-badge excellent">Excellent</span></td>
+            </tr>
+        </table>
+        <p class="remarks">Minor watermarks near faucet; cleaned during recheck.</p>
+        <div class="q-images">
+            <img src="sink_before.jpg" alt="Image">
+            <img src="sink_after.jpg" alt="Image">
         </div>
+        <hr class="divider">
+
+        <table class="question-table">
+            <tr>
+                <td>Are mirrors streak-free and polished?</td>
+                <td class="answer-cell"><span class="answer-badge good">Good</span></td>
+            </tr>
+        </table>
+        <p class="remarks">Slight streaks near edges.</p>
+        <hr class="divider">
+
+        <!-- Task 2 -->
+        <div class="task-title">Office Area Cleaning (24 / 25)</div>
+        <table class="question-table">
+            <tr>
+                <td>Are desks and surfaces dust-free?</td>
+                <td class="answer-cell"><span class="answer-badge excellent">Excellent</span></td>
+            </tr>
+            <tr>
+                <td>Are trash bins emptied?</td>
+                <td class="answer-cell"><span class="answer-badge excellent">Excellent</span></td>
+            </tr>
+        </table>
+        <hr class="divider">
+
+        <!-- Checklist -->
+        <div class="checklist">
+            <h3>Material Availability</h3>
+            <ul>
+                <li>Cleaning detergents: Available</li>
+                <li>Mop & Broom: Available</li>
+                <li>Trash bags: Missing</li>
+                <li>Gloves & Masks: Available</li>
+            </ul>
+        </div>
+
+        <!-- Signature -->
+        <div class="signature">
+            <div>
+                <img src="signature.png" alt="Signature">
+                <p>John Doe</p>
+            </div>
+            <div>
+                <p style="font-size:9px; color:#94a3b8;">Generated: Oct 12, 2025</p>
+            </div>
+        </div>
+
+        <!-- All images -->
+        <div class="all-images">
+            <img src="office_desk.jpg" alt="Image">
+            <img src="trash_bin.jpg" alt="Image">
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-left">© 2025 SparkClean Facility Services</div>
+            <div class="page-number"></div>
+        </footer>
 
     </div>
 </body>

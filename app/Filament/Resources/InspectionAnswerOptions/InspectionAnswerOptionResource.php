@@ -51,7 +51,7 @@ class InspectionAnswerOptionResource extends Resource
                         '0',
                         '50'
                     ])
-                    ->minValue(1)
+                    ->minValue(0)
                     ->maxValue(100)
                     ->required(),
                 ColorPicker::make('color_code')

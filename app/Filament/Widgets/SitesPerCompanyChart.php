@@ -3,11 +3,14 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Site;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
 
 class SitesPerCompanyChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected ?string $heading = 'Sites Per Company Chart';
 
     protected static ?int $sort = 5;
