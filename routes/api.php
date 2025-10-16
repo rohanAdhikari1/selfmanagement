@@ -7,14 +7,24 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WorkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
 Route::middleware('auth:sanctum')->name('api.')->group(function () {
     Route::get('profile', function (Request $request) {
+        $user = $request->user();
+        if ($user && $user->avatar) {
+            $user->avatar = Storage::temporaryUrl(
+                $user->avatar,
+                now()->addMinutes(5)
+            );
+        } else {
+            $user->avatar = null;
+        }
         return response()->json([
             'status'   => true,
-            'result'   => $request->user()
+            'result'   => $user
         ]);
     });
     Route::get('taskwithenrollment', [BasicController::class, 'taskWithEnrollment'])->name('taskWithEnrollment');

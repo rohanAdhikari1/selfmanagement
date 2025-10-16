@@ -43,6 +43,7 @@ class CleanerTaskReportsTable
                 TextColumn::make('cleaner.full_name')
                     ->searchable(),
                 TextColumn::make('site.company.name')
+                    ->hidden(fn() => auth()->user()->hasRole(Role::COMPANY_USER))
                     ->searchable(),
                 TextColumn::make('site.name')
                     ->searchable(),
@@ -73,16 +74,16 @@ class CleanerTaskReportsTable
                             )
                             ->reactive()
                             ->searchable()
-                            ->default(fn() => auth()->user()->company_id)
                             ->hidden(fn() => auth()->user()->hasRole(Role::COMPANY_USER))
                             ->afterStateUpdated(fn(callable $set) => $set('site_id', null)),
 
                         Select::make('site_id')
                             ->label('Site')
+                            ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 2 : 1)
                             ->placeholder('All')
                             ->options(function (callable $get) {
                                 $query = Site::query();
-                                if (filled($companyId = $get('company_id'))) {
+                                if (filled($companyId = $get('company_id')) || filled($companyId = auth()->user()->company_id)) {
                                     return $query->where('company_id', $companyId)->pluck('name', 'id')->all();
                                 }
                                 return [];
@@ -90,7 +91,7 @@ class CleanerTaskReportsTable
                     ])
                     ->hidden(fn() => auth()->user()->hasRole(Role::SITE_USER))
                     ->columns(2)
-                    ->columnSpan(2)
+                    ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 1 : 2)
                     ->query(
                         function (Builder $query, array $data): Builder {
                             return $query
@@ -128,6 +129,7 @@ class CleanerTaskReportsTable
                 DateRangeFilter::make('created_at')
                     ->label('Date')
                     ->placeholder('All')
+                    ->columnSpan(fn() => auth()->user()->hasRole(Role::COMPANY_USER) ? 2 : 1)
                     ->defaultThisMonth(),
             ], layout: FiltersLayout::AboveContentCollapsible)
             ->recordActions([

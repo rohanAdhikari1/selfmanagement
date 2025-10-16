@@ -15,65 +15,105 @@ class CleanerInfolist
     {
         return $schema
             ->components([
-                Section::make('👤 Cleaner Information')
-                    ->description('Personal details of the cleaner.')
-                    ->collapsible()
+                // 👤 Cleaner Profile
+                Section::make('👤 Cleaner Profile')
+                    ->columnSpanFull()
+                    ->description('Personal and contact details of the cleaner.')
                     ->schema([
-                        Grid::make(['default' => 1, 'md' => 2])
+                        Grid::make(['default' => 1, 'md' => 12])
                             ->schema([
-                                TextEntry::make('full_name')
-                                    ->label('Full Name')
-                                    ->icon('heroicon-o-user'),
+                                // 🖼️ Photo on the left
+                                ImageEntry::make('avatar')
+                                    ->columnSpan(2)
+                                    ->label('Profile')
+                                    ->hiddenLabel()
+                                    ->circular()
+                                    ->extraAttributes(['class' => '!text-center'])
+                                    ->alignCenter()
+                                    ->hidden(fn($record) => blank($record->avatar)),
 
-                                TextEntry::make('username')
-                                    ->icon('heroicon-o-identification'),
+                                // 📋 Details on the right
+                                Grid::make(['default' => 1, 'md' => 2])
+                                    ->columnSpan(fn($record) => blank($record->avatar) ? 12 : 10)
+                                    ->schema([
+                                        Grid::make(['default' => 1, 'md' => 2])
+                                            ->schema([
+                                                TextEntry::make('full_name')
+                                                    ->label('Full Name')
+                                                    ->icon('heroicon-o-user'),
 
-                                TextEntry::make('email')
-                                    ->icon('heroicon-o-envelope'),
+                                                TextEntry::make('username')
+                                                    ->label('Username')
+                                                    ->icon('heroicon-o-identification'),
+                                            ]),
 
-                                TextEntry::make('phone')
-                                    ->label('Phone Number')
-                                    ->icon('heroicon-o-phone'),
+                                        Grid::make(['default' => 1])
+                                            ->schema([
+                                                TextEntry::make('email')
+                                                    ->label('Email')
+                                                    ->icon('heroicon-o-envelope')
+                                                    ->copyable(),
+                                            ]),
+                                        Grid::make(['default' => 1, 'md' => 2])
+                                            ->schema([
+                                                TextEntry::make('phone')
+                                                    ->label('Phone Number')
+                                                    ->icon('heroicon-o-phone')
+                                                    ->copyable(),
+
+                                                TextEntry::make('company.name')
+                                                    ->label('Company')
+                                                    ->icon('heroicon-o-building-office')
+                                                    ->hidden(fn($record) => blank($record->company_id)),
+                                            ]),
+                                    ]),
                             ]),
                     ]),
 
-                Section::make('📄 Documents & Status')
-                    ->description('Verification and records.')
-                    ->collapsible()
+                // 📄 Documents & Status
+                Section::make('📄 Verification & Documents')
+                    ->description('Status, verification, and documentation records.')
+                    ->columnSpanFull()
+                    ->columns(5)
                     ->schema([
-                        IconEntry::make('is_active')
-                            ->label('Active Status')
-                            ->boolean(),
+                        Grid::make(['default' => 1, 'md' => 1])
+                            ->schema([
+                                IconEntry::make('is_active')
+                                    ->label('Active')
+                                    ->boolean()
+                                    ->trueIcon('heroicon-o-check-circle')
+                                    ->falseIcon('heroicon-o-x-circle'),
 
-                        ImageEntry::make('avatar')
-                            ->label('Profile Photo')
-                            ->hidden(fn($record) => blank($record->avatar)),
+                                TextEntry::make('abn_number')
+                                    ->label('ABN Number')
+                                    ->icon('heroicon-o-hashtag')
+                                    ->placeholder('Not provided'),
+                            ]),
 
-                        TextEntry::make('email_verified_at')
-                            ->dateTime()
-                            ->label('Email Verified At')
-                            ->icon('heroicon-o-check-circle'),
+                        Grid::make(['default' => 1, 'md' => 2])
+                            ->columnSpan(4)
+                            ->schema([
+                                ImageEntry::make('police_report')
+                                    ->label('Police Report')
+                                    ->hint('Available soon')
+                                    ->placeholder('Not uploaded'),
 
-                        TextEntry::make('police_report')
-                            ->label('Police Report')
-                            ->hint('Available Soon')
-                            ->icon('heroicon-o-document-text'),
+                                ImageEntry::make('official_document')
+                                    ->label('Official Document')
+                                    ->hint('Available soon')
+                                    ->placeholder('Not uploaded'),
+                            ]),
+                    ]),
 
-                        TextEntry::make('official_document')
-                            ->label('Official Document')
-                            ->hint('Available Soon')
-                            ->icon('heroicon-o-document'),
-                    ])->columns(2),
-
+                // 🏠 Address
                 Section::make('🏠 Address Information')
-                    ->description('Cleaner\'s address details.')
-                    ->collapsible()
+                    ->description('Cleaner’s registered address details.')
                     ->schema([
                         Grid::make(['default' => 1, 'md' => 2])
                             ->schema([
                                 TextEntry::make('address1')
                                     ->label('Address Line 1')
-                                    ->icon('heroicon-o-map-pin'),
+                                    ->icon('heroicon-o-map'),
 
                                 TextEntry::make('address2')
                                     ->label('Address Line 2')
@@ -81,25 +121,23 @@ class CleanerInfolist
                             ]),
                     ]),
 
-                Section::make('📊 System Metadata')
-                    ->description('Internal system tracking fields.')
-                    ->collapsed()
+                // ⚙️ Metadata
+                Section::make('⚙️ System Metadata')
+                    ->description('Internal system timestamps and audit details.')
                     ->schema([
-                        TextEntry::make('created_at')
-                            ->dateTime()
-                            ->label('Created At')
-                            ->icon('heroicon-o-calendar'),
+                        Grid::make(['default' => 1, 'md' => 2])
+                            ->schema([
+                                TextEntry::make('created_at')
+                                    ->dateTime()
+                                    ->label('Created At')
+                                    ->icon('heroicon-o-calendar'),
 
-                        TextEntry::make('updated_at')
-                            ->dateTime()
-                            ->label('Last Updated')
-                            ->icon('heroicon-o-arrow-path'),
-
-                        TextEntry::make('company.name')
-                            ->label('Company')
-                            ->hidden(fn($record) => blank($record->company_id)),
-                    ])
-                    ->columns(2),
+                                TextEntry::make('updated_at')
+                                    ->dateTime()
+                                    ->label('Last Updated')
+                                    ->icon('heroicon-o-arrow-path'),
+                            ]),
+                    ]),
             ]);
     }
 }

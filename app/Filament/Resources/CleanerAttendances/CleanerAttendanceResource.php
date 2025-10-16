@@ -25,6 +25,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -103,6 +104,7 @@ class CleanerAttendanceResource extends Resource
                     });
                 }
             })
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('cleaner.full_name')
                     ->searchable(),
@@ -211,6 +213,17 @@ class CleanerAttendanceResource extends Resource
                 DateRangeFilter::make('created_at')
                     ->label('Date')
                     ->columnSpan(2)
+                    ->indicateUsing(function (array $data, DateRangeFilter $component): ?Indicator {
+                        $column = 'created_at';
+                        $datesString = data_get($data, $column);
+                        if (empty($datesString)) {
+                            return null;
+                        }
+                        return Indicator::make(__('filament-daterangepicker-filter::message.period', [
+                            'label' => $component->getLabel(),
+                            'period' => $datesString
+                        ]))->removable(false);
+                    })
                     ->defaultThisMonth(),
             ], layout: FiltersLayout::AboveContentCollapsible)
             ->recordActions([

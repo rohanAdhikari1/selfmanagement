@@ -16,9 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
 use UnitEnum;
 
 class InspectionreportResource extends Resource
@@ -34,9 +32,18 @@ class InspectionreportResource extends Resource
         return ['report_number'];
     }
 
-    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    public static function getGlobalSearchResultTitle(Model $record): string
     {
-        return new HtmlString($record->report_number . '<br>' . $record->title);
+        return $record->report_number;
+    }
+
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Title' => $record->title,
+            'Site' => $record->site?->name,
+        ];
     }
 
     public static function getGlobalSearchResultUrl(Model $record): string

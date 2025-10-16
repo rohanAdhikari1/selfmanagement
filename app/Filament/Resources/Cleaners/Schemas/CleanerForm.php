@@ -21,14 +21,23 @@ class CleanerForm
                 Section::make('User Information')
                     ->description('Enter the user\'s personal details.')
                     ->schema([
-                        Grid::make(['default' => 1, 'md' => 2])
+                        Grid::make(['default' => 1, 'md' => 4])
+                            ->columnSpan(5)
                             ->schema([
                                 TextInput::make('full_name')
                                     ->label('Full Name')
                                     ->required()
+                                    ->columnSpan(2)
                                     ->maxLength(255),
 
                                 TextInput::make('username')
+                                    ->unique(ignoreRecord: true)
+                                    ->copyable()
+                                    ->required()
+                                    ->maxLength(255),
+
+                                TextInput::make('abn_number')
+                                    ->label('ABN Number')
                                     ->unique(ignoreRecord: true)
                                     ->required()
                                     ->maxLength(255),
@@ -37,6 +46,7 @@ class CleanerForm
                                     ->unique(ignoreRecord: true)
                                     ->email()
                                     ->required()
+                                    ->columnSpan(2)
                                     ->maxLength(255),
 
                                 TextInput::make('phone')
@@ -45,10 +55,25 @@ class CleanerForm
                                     ->tel()
                                     ->prefixIcon('heroicon-o-phone')
                                     ->maxLength(255)
+                                    ->columnSpan(2)
                                     ->default(null),
                             ]),
+                        Grid::make(['default' => 1, 'md' => 2])
+                            ->schema([
+                                FileUpload::make('avatar')
+                                    ->label('Profile')
+                                    ->image()
+                                    ->avatar()
+                                    ->circleCropper()
+                                    ->directory('users/avatars')
+                                    ->openable()
+                                    ->downloadable()
+                                    ->imageEditor()
+                                    ->moveFiles(),
+                            ]),
                     ])
-                    ->columns(1),
+                    ->columns(6)
+                    ->columnSpanFull(),
 
                 Section::make('Account Security')
                     ->description('Set a secure password for the user.')
@@ -73,6 +98,7 @@ class CleanerForm
                     ])->visibleOn('create'),
 
                 Section::make('Address')
+                    ->description('Address of Cleaner')
                     ->schema([
                         Grid::make(['default' => 1, 'md' => 2])
                             ->schema([
@@ -87,25 +113,9 @@ class CleanerForm
                                     ->default(null),
                             ]),
                     ]),
-
-                Section::make('Avatar')
-                    ->schema([
-                        Grid::make(['default' => 1, 'md' => 2])
-                            ->schema([
-                                FileUpload::make('avatar')
-                                    ->label('Profile Picture')
-                                    ->image()
-                                    ->avatar()
-                                    ->circleCropper()
-                                    ->directory('users/avatars')
-                                    ->openable()
-                                    ->downloadable()
-                                    ->imageEditor()
-                                    ->moveFiles(),
-                            ]),
-                    ]),
                 Section::make('Documents')
                     ->description('Upload required documents.')
+                    ->columnSpanFull()
                     ->schema([
                         Grid::make(['default' => 1, 'md' => 2])
                             ->schema([
