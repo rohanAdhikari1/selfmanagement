@@ -7,225 +7,386 @@
     <style>
         :root {
             --primary-color: #2563eb;
+            --primary-light: #eff6ff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --bg-body: #f1f5f9;
+            --bg-card: #ffffff;
+            --border-color: #e2e8f0;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --good-bg: #fef9c3;
+            --good-text: #854d0e;
+            --poor-bg: #fee2e2;
+            --poor-text: #991b1b;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             font-size: 12px;
-            color: #1e293b;
+            color: var(--text-main);
             margin: 0;
-            background: #fff;
+            background: var(--bg-body);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
         .report {
-            max-width: 800px;
+            max-width: 100%;
             margin: 0 auto;
+            background: var(--bg-card);
+            /* No shadow or border radius for PDF usually desirable to save rendering */
             padding: 20px;
-            background: #fff;
+            position: relative;
+            padding-bottom: 40px;
+            /* Space for footer */
         }
 
         /* Header */
-        .header-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-            border-bottom: 3px solid var(--primary-color);
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 12px;
         }
 
-        .header-left img {
-            height: 50px;
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-brand img {
+            height: 40px;
             width: auto;
+            object-fit: contain;
         }
 
-        .header-left h1 {
+        .header-brand div h1 {
             margin: 0;
-            font-size: 20px;
+            font-size: 28px;
+            font-weight: 700;
             color: var(--primary-color);
+            letter-spacing: -0.5px;
         }
 
-        .header-left p {
-            margin: 0;
-            font-size: 10px;
-            color: #475569;
+        .header-brand div p {
+            margin: 4px 0 0;
+            font-size: 20px;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .header-right {
+        .header-meta {
             text-align: right;
-            font-size: 10px;
-            color: #475569;
-            white-space: nowrap;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .header-meta p {
+            margin: 2px 0;
         }
 
         /* Overall Points */
         .overall-points {
-            font-weight: bold;
-            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 13px;
             color: var(--primary-color);
-            margin-bottom: 10px;
-            background: #e0f2fe;
-            display: inline-block;
+            background: var(--primary-light);
             padding: 6px 10px;
             border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #dbeafe;
         }
 
         /* Task title */
+        .task-section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+
         .task-title {
             font-size: 14px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin-top: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 8px;
+        }
+
+        .task-title span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        /* Question Item - Replacing Table with clean Divs */
+        /* Question Item - Replacing Table with clean Divs */
+        .question-item {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
             margin-bottom: 6px;
+            page-break-inside: avoid;
         }
 
-        /* Questions Table */
-        .question-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 4px;
+        .question-item:hover {
+            border-color: #cbd5e1;
         }
 
-        .question-table td {
-            padding: 6px 10px;
-            vertical-align: top;
+        .question-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
         }
 
-        .answer-cell {
-            text-align: right;
+        .question-text {
+            font-weight: 500;
+            color: #334155;
+            flex: 1;
         }
 
         .answer-badge {
-            color: #fff;
-            font-weight: bold;
-            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
             border-radius: 12px;
-            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .excellent {
-            background-color: #16a34a;
+            background-color: var(--success-bg);
+            color: var(--success-text);
         }
 
         .good {
-            background-color: #facc15;
-            color: #000;
+            background-color: var(--good-bg);
+            color: var(--good-text);
         }
 
         .poor {
-            background-color: #dc2626;
+            background-color: var(--poor-bg);
+            color: var(--poor-text);
         }
 
         /* Remarks */
         .remarks {
-            font-size: 11px;
-            color: #475569;
-            margin: 4px 0 4px 0;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: #f8fafc;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
         }
 
+        .remarks::before {
+            content: "📝";
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        /* Question images */
         /* Question images */
         .q-images {
             display: flex;
             gap: 6px;
+            margin-top: 6px;
             flex-wrap: wrap;
-            margin-bottom: 8px;
         }
 
         .q-images img {
-            width: 100px;
-            height: 100px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
             border-radius: 4px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
         }
 
-        /* Divider after each question */
-        .divider {
-            border: none;
-            border-bottom: 1px solid #e2e8f0;
-            margin: 4px 0;
+        .q-images img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.1);
         }
 
         /* Checklist */
         .checklist {
-            margin-top: 12px;
-            margin-bottom: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 20px;
+            page-break-inside: avoid;
         }
 
         .checklist h3 {
-            font-size: 13px;
+            font-size: 15px;
             color: var(--primary-color);
-            margin-bottom: 4px;
+            margin: 0 0 16px 0;
+            font-weight: 700;
         }
 
-        .checklist ul {
-            margin: 0;
-            padding-left: 16px;
-            font-size: 11px;
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
         }
 
-        .checklist li {
-            margin-bottom: 2px;
+        .checklist-item {
+            font-size: 13px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* Signature */
+        .checklist-item::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: block;
+        }
+
+        .checklist-item.missing {
+            color: #991b1b;
+        }
+
+        .checklist-item.missing::before {
+            background-color: #ef4444;
+        }
+
+        /* Signature and Footer Area */
+        .bottom-section {
+            margin-top: 24px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            page-break-inside: avoid;
+        }
+
         .signature {
-            margin-top: 12px;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
+            margin-bottom: 24px;
         }
 
         .signature img {
-            width: 120px;
+            width: 100px;
             height: auto;
+            margin-bottom: 2px;
+            filter: contrast(1.1);
         }
 
         .signature p {
-            font-size: 10px;
-            color: #475569;
-            margin-top: 2px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 0;
+            font-weight: 500;
         }
 
         /* All images */
         .all-images {
-            margin-top: 12px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
         }
 
         .all-images img {
-            width: 150px;
-            height: 150px;
+            width: 100%;
+            height: 100px;
             object-fit: cover;
-            border: 1px solid #e2e8f0;
-            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .all-images img:hover {
+            transform: scale(1.02);
         }
 
         /* Footer */
         footer {
-            position: fixed;
-            bottom: 0;
+            position: absolute;
+            bottom: 10px;
             left: 0;
             right: 0;
-            height: 30px;
-            border-top: 1px solid #e2e8f0;
-            font-size: 0.9em;
+            padding: 0 24px;
+            font-size: 11px;
             color: #94a3b8;
-            width: 100%;
-            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .page-number:before {
-            content: "Page " counter(page) " of " counter(pages);
-            position: absolute;
-            right: 10px;
-            bottom: 5px;
+        .page-number::after {
+            content: "Page 1 of 1";
+            /* Simplified CSS counter for single page view, or use counter(page) if printing */
         }
 
-        .footer-left {
-            position: absolute;
-            left: 10px;
-            bottom: 5px;
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            body {
+                background: white;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .report {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
+                width: 100%;
+                padding-bottom: 0;
+                border: none;
+            }
+
+            .header-container,
+            .overall-points,
+            .task-section,
+            .question-item,
+            .checklist,
+            .bottom-section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .task-title {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
+
+            footer {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 10px 20px;
+                border-top: 1px solid #e2e8f0;
+                box-sizing: border-box;
+                background: white;
+                z-index: 100;
+            }
+
+            .page-number::after {
+                content: "Page " counter(page) " of " counter(pages);
+            }
         }
     </style>
 </head>
@@ -234,96 +395,101 @@
     <div class="report">
 
         <!-- Header -->
-        <table class="header-table">
-            <tr>
-                <td style="width:70%;">
-                    <table style="border-collapse:collapse;">
-                        <tr>
-                            <td style="padding-right:8px;"><img src="company-logo.png" alt="Logo"></td>
-                            <td style="vertical-align:top;">
-                                <h1>Cleaning Inspection Report</h1>
-                                <p>SparkClean Facility Services</p>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-                <td style="width:30%;">
-                    <div class="header-right">
-                        <p><strong>Date:</strong> Oct 12, 2025</p>
-                        <p><strong>Inspector:</strong> John Doe</p>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div class="header-container">
+            <div class="header-brand">
+                <img src="company-logo.png" alt="Logo">
+                <div>
+                    <h1>Cleaning Inspection Report</h1>
+                    <p>SparkClean Facility Services Private Limited.</p>
+                </div>
+            </div>
+            <div class="header-meta">
+                <p><strong>Date:</strong> Oct 12, 2025</p>
+                <p><strong>Inspector:</strong> John Doe</p>
+            </div>
+        </div>
 
         <!-- Overall Points -->
         <div class="overall-points">Overall Points: 52 / 55</div>
 
         <!-- Task 1 -->
-        <div class="task-title">Restroom Cleaning (28 / 30)</div>
+        <div class="task-section">
+            <div class="task-title">
+                Restroom Cleaning
+                <span>(28 / 30)</span>
+            </div>
 
-        <table class="question-table">
-            <tr>
-                <td>Are sinks and counters free of stains and debris?</td>
-                <td class="answer-cell"><span class="answer-badge excellent">Excellent</span></td>
-            </tr>
-        </table>
-        <p class="remarks">Minor watermarks near faucet; cleaned during recheck.</p>
-        <div class="q-images">
-            <img src="sink_before.jpg" alt="Image">
-            <img src="sink_after.jpg" alt="Image">
+            <div class="question-item">
+                <div class="question-row">
+                    <span class="question-text">Are sinks and counters free of stains and debris?</span>
+                    <span class="answer-badge excellent">Excellent</span>
+                </div>
+                <div class="remarks">Minor watermarks near faucet; cleaned during recheck.</div>
+                <div class="q-images">
+                    <img src="sink_before.jpg" alt="Image">
+                    <img src="sink_after.jpg" alt="Image">
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-row">
+                    <span class="question-text">Are mirrors streak-free and polished?</span>
+                    <span class="answer-badge good">Good</span>
+                </div>
+                <div class="remarks">Slight streaks near edges.</div>
+            </div>
         </div>
-        <hr class="divider">
-
-        <table class="question-table">
-            <tr>
-                <td>Are mirrors streak-free and polished?</td>
-                <td class="answer-cell"><span class="answer-badge good">Good</span></td>
-            </tr>
-        </table>
-        <p class="remarks">Slight streaks near edges.</p>
-        <hr class="divider">
 
         <!-- Task 2 -->
-        <div class="task-title">Office Area Cleaning (24 / 25)</div>
-        <table class="question-table">
-            <tr>
-                <td>Are desks and surfaces dust-free?</td>
-                <td class="answer-cell"><span class="answer-badge excellent">Excellent</span></td>
-            </tr>
-            <tr>
-                <td>Are trash bins emptied?</td>
-                <td class="answer-cell"><span class="answer-badge excellent">Excellent</span></td>
-            </tr>
-        </table>
-        <hr class="divider">
+        <div class="task-section">
+            <div class="task-title">
+                Office Area Cleaning
+                <span>(24 / 25)</span>
+            </div>
+
+            <div class="question-item">
+                <div class="question-row">
+                    <span class="question-text">Are desks and surfaces dust-free?</span>
+                    <span class="answer-badge excellent">Excellent</span>
+                </div>
+            </div>
+
+            <div class="question-item">
+                <div class="question-row">
+                    <span class="question-text">Are trash bins emptied?</span>
+                    <span class="answer-badge excellent">Excellent</span>
+                </div>
+            </div>
+        </div>
 
         <!-- Checklist -->
         <div class="checklist">
             <h3>Material Availability</h3>
-            <ul>
-                <li>Cleaning detergents: Available</li>
-                <li>Mop & Broom: Available</li>
-                <li>Trash bags: Missing</li>
-                <li>Gloves & Masks: Available</li>
-            </ul>
-        </div>
-
-        <!-- Signature -->
-        <div class="signature">
-            <div>
-                <img src="signature.png" alt="Signature">
-                <p>John Doe</p>
-            </div>
-            <div>
-                <p style="font-size:9px; color:#94a3b8;">Generated: Oct 12, 2025</p>
+            <div class="checklist-grid">
+                <div class="checklist-item">Cleaning detergents: <strong>Available</strong></div>
+                <div class="checklist-item">Mop & Broom: <strong>Available</strong></div>
+                <div class="checklist-item missing">Trash bags: <strong>Missing</strong></div>
+                <div class="checklist-item">Gloves & Masks: <strong>Available</strong></div>
             </div>
         </div>
 
-        <!-- All images -->
-        <div class="all-images">
-            <img src="office_desk.jpg" alt="Image">
-            <img src="trash_bin.jpg" alt="Image">
+        <div class="bottom-section">
+            <!-- Signature -->
+            <div class="signature">
+                <div>
+                    <img src="signature.png" alt="Signature">
+                    <p>John Doe</p>
+                </div>
+                <div>
+                    <p style="font-size:11px; color:#94a3b8;">Generated: Oct 12, 2025</p>
+                </div>
+            </div>
+
+            <!-- All images -->
+            <div class="all-images">
+                <img src="office_desk.jpg" alt="Image">
+                <img src="trash_bin.jpg" alt="Image">
+            </div>
         </div>
 
         <!-- Footer -->
