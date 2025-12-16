@@ -5,475 +5,310 @@
     <meta charset="UTF-8">
     <title>Commercial Cleaning Inspection</title>
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-light: #eff6ff;
-            --text-main: #1e293b;
-            --text-secondary: #64748b;
-            --bg-body: #f1f5f9;
-            --bg-card: #ffffff;
-            --border-color: #e2e8f0;
-            --success-bg: #dcfce7;
-            --success-text: #166534;
-            --good-bg: #fef9c3;
-            --good-text: #854d0e;
-            --poor-bg: #fee2e2;
-            --poor-text: #991b1b;
+        /* DOMPDF COMPATIBILITY SETTINGS */
+        @page {
+            margin: 0px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            /* Use standard fonts for PDF stability */
             font-size: 12px;
-            color: var(--text-main);
+            color: #1e293b;
             margin: 0;
-            background: var(--bg-body);
+            padding: 30px;
+            background: #ffffff;
+            /* White bg is better for print */
             line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
         }
 
-        .report {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--bg-card);
-            padding: 20px;
-            position: relative;
-            padding-bottom: 40px;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
         }
 
-        /* Header */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 12px;
+        td {
+            vertical-align: top;
         }
 
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-brand img {
-            height: 40px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .header-brand div h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary-color);
-            letter-spacing: -0.5px;
-        }
-
-        .header-brand div p {
-            margin: 4px 0 0;
-            font-size: 20px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .header-meta {
+        /* UTILITIES */
+        .text-right {
             text-align: right;
-            font-size: 13px;
-            color: var(--text-secondary);
         }
 
-        .header-meta p {
-            margin: 2px 0;
+        .text-center {
+            text-align: center;
+        }
+
+        .font-bold {
+            font-weight: bold;
+        }
+
+        .text-secondary {
+            color: #64748b;
+        }
+
+        .text-primary {
+            color: #2563eb;
+        }
+
+        /* HEADER */
+        .header-table {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .header-brand-img {
+            width: 50px;
+            padding-right: 15px;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #2563eb;
+        }
+
+        .header-title p {
+            margin: 2px 0 0;
+            font-size: 16px;
+            color: #64748b;
         }
 
         .confidential-badge {
             font-size: 10px;
-            font-weight: 700;
             color: #b91c1c;
-            background: #fef2f2;
+            background-color: #fef2f2;
             border: 1px solid #fecaca;
-            padding: 2px 8px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: inline-block;
-            margin-bottom: 4px;
-        }
-
-        /* Overall Points */
-        .overall-points {
-            display: inline-flex;
-            align-items: center;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--primary-color);
-            background: var(--primary-light);
-            padding: 6px 10px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border: 1px solid #dbeafe;
-        }
-
-        /* Task title */
-        .task-section {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
-        }
-
-        .task-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-left: 4px solid var(--primary-color);
-            padding-left: 8px;
-        }
-
-        .task-title span {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        /* Question Item - Replacing Table with clean Divs */
-        .question-item {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 6px;
-            page-break-inside: avoid;
-        }
-
-        .question-item:hover {
-            border-color: #cbd5e1;
-        }
-
-        .question-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .question-text {
-            font-weight: 500;
-            color: #334155;
-            flex: 1;
-        }
-
-        .answer-badge {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .excellent {
-            background-color: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .good {
-            background-color: var(--good-bg);
-            color: var(--good-text);
-        }
-
-        .poor {
-            background-color: var(--poor-bg);
-            color: var(--poor-text);
-        }
-
-        /* Remarks */
-        .remarks {
-            margin-top: 8px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            background: #f8fafc;
-            padding: 6px 10px;
-            border-radius: 6px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .remarks::before {
-            content: "📝";
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        /* Question images */
-        .q-images {
-            display: flex;
-            gap: 6px;
-            margin-top: 6px;
-            flex-wrap: wrap;
-        }
-
-        .q-images img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
+            padding: 2px 6px;
             border-radius: 4px;
-            border: 1px solid var(--border-color);
+            /* Reduced radius for PDF */
+            text-transform: uppercase;
+            display: inline-block;
         }
 
-        .q-images img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        /* OVERALL SCORE */
+        .score-box {
+            background-color: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #dbeafe;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 13px;
+            display: inline-block;
+            /* Helps width in PDF */
+            margin-bottom: 20px;
         }
 
-        /* Checklist / Summary Grid */
-        .checklist {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 20px;
-            page-break-inside: avoid;
+        /* CHECKLIST / SUMMARY */
+        .checklist-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
-        .checklist h3 {
-            font-size: 15px;
-            color: var(--primary-color);
-            margin: 0 0 16px 0;
-            font-weight: 700;
-        }
-
-        .checklist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
+        .checklist-title {
+            color: #2563eb;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
         }
 
         .checklist-item {
-            font-size: 13px;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            padding-bottom: 4px;
         }
 
-        .checklist-item strong {
-            color: var(--text-main);
-            font-weight: 600;
+        /* TASK SECTIONS */
+        .task-header {
+            background-color: #f1f5f9;
+            border-left: 4px solid #2563eb;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 14px;
         }
 
-        /* Signature and Footer Area */
-        .bottom-section {
-            margin-top: 24px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-color);
+        /* QUESTION ITEMS (Converted to Table) */
+        .question-table {
+            margin-bottom: 8px;
             page-break-inside: avoid;
+            /* Prevent splitting row across pages */
+            border: 1px solid #e2e8f0;
         }
 
-        .signature {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 24px;
+        .question-table td {
+            padding: 10px;
+            vertical-align: middle;
         }
 
-        .signature img {
-            width: 100px;
-            height: auto;
-            margin-bottom: 2px;
-            filter: contrast(1.1);
-        }
-
-        .signature p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 0;
+        .q-text {
+            color: #334155;
             font-weight: 500;
         }
 
-        /* All images */
-        .all-images {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
+        /* BADGES */
+        .badge {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            text-align: center;
+            display: inline-block;
+            min-width: 40px;
         }
 
-        .all-images img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+        .badge-excellent {
+            background-color: #dcfce7;
+            color: #166534;
         }
 
-        .all-images img:hover {
-            transform: scale(1.02);
+        .badge-good {
+            background-color: #fef9c3;
+            color: #854d0e;
         }
 
-        /* Footer */
-        footer {
-            position: absolute;
-            bottom: 10px;
+        .badge-poor {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* FOOTER */
+        .footer {
+            position: fixed;
+            bottom: -20px;
+            /* Adjust based on margin */
             left: 0;
             right: 0;
-            padding: 0 24px;
-            font-size: 11px;
+            height: 30px;
+            font-size: 10px;
             color: #94a3b8;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 5px;
         }
 
-        .page-number::after {
-            content: "Page 1 of 1";
-        }
-
-        @media print {
-            @page {
-                size: A4;
-                margin: 10mm;
-            }
-
-            body {
-                background: white;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            .report {
-                box-shadow: none;
-                margin: 0;
-                padding: 0;
-                max-width: 100%;
-                width: 100%;
-                padding-bottom: 0;
-                border: none;
-            }
-
-            .header-container,
-            .overall-points,
-            .task-section,
-            .question-item,
-            .checklist,
-            .bottom-section {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-
-            .task-title {
-                break-after: avoid;
-                page-break-after: avoid;
-            }
-
-            footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                padding: 10px 20px;
-                border-top: 1px solid #e2e8f0;
-                box-sizing: border-box;
-                background: white;
-                z-index: 100;
-            }
-
-            .page-number::after {
-                content: "Page " counter(page) " of " counter(pages);
-            }
-        }
-
-        /* dedicated summary styles to fix print layout */
-        .summary-checklist .checklist-grid {
-            grid-template-columns: 1fr 1fr !important;
-        }
-
-        .summary-checklist .checklist-item::before {
-            display: none;
-        }
-
-        .summary-checklist .checklist-item {
-            padding: 2px 0;
+        .page-number:after {
+            content: counter(page);
         }
     </style>
 </head>
 
 <body>
-    <div class="report">
 
-        <!-- Header -->
-        <div class="header-container">
-            <div class="header-brand">
-                <img src="company-logo.png" alt="Logo">
-                <div>
+    <!-- Header -->
+    <table class="header-table">
+        <tr>
+            <td style="width: 60px;">
+                <!-- Use public_path() for images -->
+                <!-- Example: <img src="{{ public_path('images/logo.png') }}" class="header-brand-img"> -->
+                <!-- For testing without real image: -->
+                <div style="width: 50px; height: 50px; background: #eee; border-radius: 4px;"></div>
+            </td>
+            <td>
+                <div class="header-title">
                     <h1>Commercial Cleaning Inspection</h1>
                     <p>TESKI CLEANING</p>
                 </div>
-            </div>
-            <div class="header-meta">
-                <span class="confidential-badge">Private & Confidential</span>
-                <p><strong>Date:</strong> 22.08.2025</p>
-                <p><strong>Ref:</strong> #INS-2025-001</p>
-            </div>
-        </div>
+            </td>
+            <td class="text-right" style="width: 180px;">
+                <div class="confidential-badge">Private & Confidential</div>
+                <p class="text-secondary" style="margin: 5px 0 0;">
+                    <strong>Date:</strong> 22.08.2025<br>
+                    <strong>Ref:</strong> #INS-2025-001
+                </p>
+            </td>
+        </tr>
+    </table>
 
-        <!-- Overall Score -->
-        <div class="overall-points">Overall Score: 346 / 361 (95.85%)</div>
-
-        <!-- Summary Section (using checklist style) -->
-        <div class="checklist summary-checklist" style="margin-top: 0; margin-bottom: 24px;">
-            <h3>Perth Radiological Clinic - Armadale North</h3>
-            <div class="checklist-grid">
-                <div class="checklist-item">Conducted On: <strong>22.08.2025 11:13 AWST</strong></div>
-                <div class="checklist-item">Contractor: <strong>Steven McGarry</strong></div>
-                <div class="checklist-item" style="grid-column: span 2;">Contact Method: <strong>Client Attended
-                        Inspection</strong></div>
-            </div>
-        </div>
-
-        <!-- Inspection Details Section -->
-        <div class="task-section">
-            <div class="task-title">
-                Inspection Details
-            </div>
-            <!-- Dynamic items would go here -->
-            <div class="question-item">
-                <div class="question-row">
-                    <span class="question-text">General cleanliness of reception area</span>
-                    <span class="answer-badge excellent">Pass</span>
-                </div>
-            </div>
-            <div class="question-item">
-                <div class="question-row">
-                    <span class="question-text">Floors swept and mopped</span>
-                    <span class="answer-badge good">Pass</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="bottom-section">
-            <!-- Signature -->
-            <div class="signature">
-                <div>
-                    <img src="signature.png" alt="Signature">
-                    <p>Steven McGarry</p>
-                </div>
-                <div>
-                    <p style="font-size:11px; color:#94a3b8;">Generated: 22.08.2025</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            <div class="footer-left">Inspection Report for Perth Radiological Clinic - Armadale North</div>
-            <div class="page-number"></div>
-        </footer>
-
+    <!-- Overall Score -->
+    <div class="score-box">
+        Overall Score: 346 / 361 (95.85%)
     </div>
+
+    <!-- Summary Section -->
+    <div class="checklist-box">
+        <div class="checklist-title">Perth Radiological Clinic - Armadale North</div>
+        <table>
+            <tr>
+                <td width="50%" class="checklist-item">Conducted On: <strong>22.08.2025</strong></td>
+                <td width="50%" class="checklist-item">Contractor: <strong>Steven McGarry</strong></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="checklist-item">Method: <strong>Client Attended Inspection</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Inspection Details -->
+    <div class="task-section">
+        <div class="task-header">
+            Inspection Details
+        </div>
+
+        <!-- Question 1 -->
+        <table class="question-table">
+            <tr>
+                <td class="q-text">General cleanliness of reception area</td>
+                <td style="width: 60px; text-align: right;">
+                    <span class="badge badge-excellent">Pass</span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Question 2 -->
+        <table class="question-table">
+            <tr>
+                <td class="q-text">Floors swept and mopped</td>
+                <td style="width: 60px; text-align: right;">
+                    <span class="badge badge-good">Pass</span>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Question 3 (Example Fail) -->
+        <table class="question-table">
+            <tr>
+                <td class="q-text">Dusting of high surfaces</td>
+                <td style="width: 60px; text-align: right;">
+                    <span class="badge badge-poor">Fail</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+        <table style="width: 100%">
+            <tr>
+                <td>
+                    <!-- Signature Image -->
+                    <!-- <img src="{{ public_path('images/signature.png') }}" style="height: 40px;"> -->
+                    <div style="height: 40px; border-bottom: 1px solid #000; width: 150px;"></div>
+                    <p style="margin: 5px 0 0; font-weight: bold;">Steven McGarry</p>
+                </td>
+                <td class="text-right" style="vertical-align: bottom;">
+                    <p style="color: #94a3b8; font-size: 10px;">Generated: 22.08.2025</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <table style="width: 100%;">
+            <tr>
+                <td>Inspection Report for Perth Radiological Clinic</td>
+                <td class="text-right">Page <span class="page-number"></span></td>
+            </tr>
+        </table>
+    </div>
+
 </body>
 
 </html>

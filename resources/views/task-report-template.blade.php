@@ -5,500 +5,406 @@
     <meta charset="UTF-8">
     <title>Cleaning Inspection Report</title>
     <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-light: #eff6ff;
-            --text-main: #1e293b;
-            --text-secondary: #64748b;
-            --bg-body: #f1f5f9;
-            --bg-card: #ffffff;
-            --border-color: #e2e8f0;
-            --success-bg: #dcfce7;
-            --success-text: #166534;
-            --good-bg: #fef9c3;
-            --good-text: #854d0e;
-            --poor-bg: #fee2e2;
-            --poor-text: #991b1b;
+        /* DOMPDF SETTINGS */
+        @page {
+            margin: 0px;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 12px;
-            color: var(--text-main);
-            margin: 0;
-            background: var(--bg-body);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
+            color: #1e293b;
+            margin: 30px;
+            /* Internal margin */
+            line-height: 1.4;
         }
 
-        .report {
-            max-width: 100%;
-            margin: 0 auto;
-            background: var(--bg-card);
-            /* No shadow or border radius for PDF usually desirable to save rendering */
-            padding: 20px;
-            position: relative;
-            padding-bottom: 40px;
-            /* Space for footer */
+        /* RESET & UTILITIES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
         }
 
-        /* Header */
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding-bottom: 12px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 12px;
+        td {
+            vertical-align: top;
         }
 
-        .header-brand {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .header-brand img {
-            height: 40px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .header-brand div h1 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary-color);
-            letter-spacing: -0.5px;
-        }
-
-        .header-brand div p {
-            margin: 4px 0 0;
-            font-size: 20px;
-            color: var(--text-secondary);
-            font-weight: 500;
-        }
-
-        .header-meta {
+        .text-right {
             text-align: right;
-            font-size: 13px;
-            color: var(--text-secondary);
         }
 
-        .header-meta p {
-            margin: 2px 0;
+        .text-bold {
+            font-weight: bold;
         }
 
-        /* Overall Points */
-        .overall-points {
-            display: inline-flex;
-            align-items: center;
-            font-weight: 600;
-            font-size: 13px;
-            color: var(--primary-color);
-            background: var(--primary-light);
-            padding: 6px 10px;
-            border-radius: 6px;
+        .text-secondary {
+            color: #64748b;
+        }
+
+        /* HEADER */
+        .header-container {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
             margin-bottom: 20px;
-            border: 1px solid #dbeafe;
         }
 
-        /* Task title */
-        .task-section {
-            margin-bottom: 20px;
-            page-break-inside: avoid;
-        }
-
-        .task-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-left: 4px solid var(--primary-color);
-            padding-left: 8px;
-        }
-
-        .task-title span {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        /* Question Item - Replacing Table with clean Divs */
-        /* Question Item - Replacing Table with clean Divs */
-        .question-item {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 6px;
-            page-break-inside: avoid;
-        }
-
-        .question-item:hover {
-            border-color: #cbd5e1;
-        }
-
-        .question-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .question-text {
-            font-weight: 500;
-            color: #334155;
-            flex: 1;
-        }
-
-        .answer-badge {
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .excellent {
-            background-color: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .good {
-            background-color: var(--good-bg);
-            color: var(--good-text);
-        }
-
-        .poor {
-            background-color: var(--poor-bg);
-            color: var(--poor-text);
-        }
-
-        /* Remarks */
-        .remarks {
-            margin-top: 8px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            background: #f8fafc;
-            padding: 6px 10px;
-            border-radius: 6px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-        }
-
-        .remarks::before {
-            content: "📝";
-            font-size: 12px;
-            opacity: 0.7;
-        }
-
-        /* Question images */
-        /* Question images */
-        .q-images {
-            display: flex;
-            gap: 6px;
-            margin-top: 6px;
-            flex-wrap: wrap;
-        }
-
-        .q-images img {
+        .logo {
             width: 50px;
-            height: 50px;
-            object-fit: cover;
+            height: auto;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+            /* Primary Blue */
+            margin: 0;
+        }
+
+        .company-sub {
+            font-size: 14px;
+            color: #64748b;
+            margin: 2px 0 0;
+        }
+
+        /* OVERALL SCORE */
+        .score-box {
+            background-color: #eff6ff;
+            border: 1px solid #dbeafe;
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 8px 12px;
             border-radius: 4px;
-            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            display: inline-block;
         }
 
-        .q-images img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        /* TASKS SECTIONS */
+        .section-title {
+            background-color: #f8fafc;
+            /* Optional: adds subtle header bg */
+            border-left: 4px solid #2563eb;
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            color: #1e293b;
+            font-weight: bold;
+            font-size: 14px;
         }
 
-        /* Checklist */
-        .checklist {
-            background: #f8fafc;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px;
-            margin-top: 20px;
+        .section-score {
+            float: right;
+            color: #64748b;
+            font-weight: normal;
+            font-size: 12px;
+        }
+
+        /* QUESTION TABLES */
+        .question-table {
+            border: 1px solid #e2e8f0;
+            margin-bottom: 10px;
             page-break-inside: avoid;
         }
 
-        .checklist h3 {
-            font-size: 15px;
-            color: var(--primary-color);
-            margin: 0 0 16px 0;
-            font-weight: 700;
+        .question-table td {
+            padding: 8px 10px;
+            vertical-align: middle;
         }
 
-        .checklist-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
+        .q-text {
+            color: #334155;
+            font-weight: 500;
         }
 
-        .checklist-item {
-            font-size: 13px;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* BADGES */
+        .badge {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 10px;
+            /* DomPDF renders this okay, often looks square though */
+            text-transform: uppercase;
+            display: inline-block;
+            text-align: center;
         }
 
-        .checklist-item::before {
-            content: "";
-            width: 6px;
-            height: 6px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-            display: block;
+        .badge-excellent {
+            background-color: #dcfce7;
+            color: #166534;
         }
 
-        .checklist-item.missing {
+        .badge-good {
+            background-color: #fef9c3;
+            color: #854d0e;
+        }
+
+        .badge-poor {
+            background-color: #fee2e2;
             color: #991b1b;
         }
 
-        .checklist-item.missing::before {
-            background-color: #ef4444;
+        /* REMARKS */
+        .remarks-row td {
+            background-color: #f8fafc;
+            color: #64748b;
+            font-size: 11px;
+            border-top: 1px solid #e2e8f0;
+            padding: 6px 10px;
         }
 
-        /* Signature and Footer Area */
-        .bottom-section {
-            margin-top: 24px;
-            padding-top: 12px;
-            border-top: 1px solid var(--border-color);
+        /* IMAGES IN QUESTIONS */
+        .img-row td {
+            padding-top: 5px;
+            padding-bottom: 10px;
+        }
+
+        .q-img {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #e2e8f0;
+            margin-right: 5px;
+            display: inline-block;
+        }
+
+        /* CHECKLIST */
+        .checklist-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
             page-break-inside: avoid;
         }
 
-        .signature {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 24px;
+        .checklist-header {
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
         }
 
-        .signature img {
-            width: 100px;
-            height: auto;
-            margin-bottom: 2px;
-            filter: contrast(1.1);
+        .check-item {
+            padding: 4px 0;
+            font-size: 12px;
         }
 
-        .signature p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin: 0;
-            font-weight: 500;
+        .dot {
+            color: #2563eb;
+            font-size: 16px;
+            line-height: 10px;
+            margin-right: 5px;
         }
 
-        /* All images */
-        .all-images {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 8px;
+        .missing-item {
+            color: #991b1b;
         }
 
-        .all-images img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+        .missing-dot {
+            color: #ef4444;
         }
 
-        .all-images img:hover {
-            transform: scale(1.02);
+        /* FOOTER SIGNATURES */
+        .signature-section {
+            margin-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            page-break-inside: avoid;
         }
 
-        /* Footer */
-        footer {
-            position: absolute;
-            bottom: 10px;
+        .sig-img {
+            height: 40px;
+            margin-bottom: 5px;
+        }
+
+        .footer-fixed {
+            position: fixed;
+            bottom: -20px;
             left: 0;
             right: 0;
-            padding: 0 24px;
-            font-size: 11px;
+            height: 30px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 5px;
+            font-size: 10px;
             color: #94a3b8;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .page-number::after {
-            content: "Page 1 of 1";
-            /* Simplified CSS counter for single page view, or use counter(page) if printing */
+        .page-number:after {
+            content: counter(page);
         }
 
-        @media print {
-            @page {
-                size: A4;
-                margin: 10mm;
-            }
-
-            body {
-                background: white;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-
-            .report {
-                box-shadow: none;
-                margin: 0;
-                padding: 0;
-                max-width: 100%;
-                width: 100%;
-                padding-bottom: 0;
-                border: none;
-            }
-
-            .header-container,
-            .overall-points,
-            .task-section,
-            .question-item,
-            .checklist,
-            .bottom-section {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-
-            .task-title {
-                break-after: avoid;
-                page-break-after: avoid;
-            }
-
-            footer {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                padding: 10px 20px;
-                border-top: 1px solid #e2e8f0;
-                box-sizing: border-box;
-                background: white;
-                z-index: 100;
-            }
-
-            .page-number::after {
-                content: "Page " counter(page) " of " counter(pages);
-            }
+        /* GALLERY AT BOTTOM */
+        .gallery-img {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border: 1px solid #e2e8f0;
+            margin-right: 10px;
+            display: inline-block;
         }
     </style>
 </head>
 
 <body>
-    <div class="report">
 
-        <!-- Header -->
-        <div class="header-container">
-            <div class="header-brand">
-                <img src="company-logo.png" alt="Logo">
-                <div>
-                    <h1>Cleaning Inspection Report</h1>
-                    <p>SparkClean Facility Services Private Limited.</p>
-                </div>
-            </div>
-            <div class="header-meta">
-                <p><strong>Date:</strong> Oct 12, 2025</p>
-                <p><strong>Inspector:</strong> John Doe</p>
-            </div>
-        </div>
+    <!-- Header -->
+    <table class="header-container">
+        <tr>
+            <td style="width: 60px;">
+                <!-- Placeholder for logo. In Laravel: <img src="{{ public_path('images/company-logo.png') }}" class="logo"> -->
+                <div style="width: 50px; height: 50px; background: #ddd; border-radius: 4px;"></div>
+            </td>
+            <td>
+                <h1 class="company-name">Cleaning Inspection Report</h1>
+                <p class="company-sub">SparkClean Facility Services Private Limited.</p>
+            </td>
+            <td class="text-right" style="width: 200px;">
+                <p style="margin: 0;">
+                    <span class="text-secondary">Date:</span> <strong>Oct 12, 2025</strong><br>
+                    <span class="text-secondary">Inspector:</span> <strong>John Doe</strong>
+                </p>
+            </td>
+        </tr>
+    </table>
 
-        <!-- Overall Points -->
-        <div class="overall-points">Overall Points: 52 / 55</div>
-
-        <!-- Task 1 -->
-        <div class="task-section">
-            <div class="task-title">
-                Restroom Cleaning
-                <span>(28 / 30)</span>
-            </div>
-
-            <div class="question-item">
-                <div class="question-row">
-                    <span class="question-text">Are sinks and counters free of stains and debris?</span>
-                    <span class="answer-badge excellent">Excellent</span>
-                </div>
-                <div class="remarks">Minor watermarks near faucet; cleaned during recheck.</div>
-                <div class="q-images">
-                    <img src="sink_before.jpg" alt="Image">
-                    <img src="sink_after.jpg" alt="Image">
-                </div>
-            </div>
-
-            <div class="question-item">
-                <div class="question-row">
-                    <span class="question-text">Are mirrors streak-free and polished?</span>
-                    <span class="answer-badge good">Good</span>
-                </div>
-                <div class="remarks">Slight streaks near edges.</div>
-            </div>
-        </div>
-
-        <!-- Task 2 -->
-        <div class="task-section">
-            <div class="task-title">
-                Office Area Cleaning
-                <span>(24 / 25)</span>
-            </div>
-
-            <div class="question-item">
-                <div class="question-row">
-                    <span class="question-text">Are desks and surfaces dust-free?</span>
-                    <span class="answer-badge excellent">Excellent</span>
-                </div>
-            </div>
-
-            <div class="question-item">
-                <div class="question-row">
-                    <span class="question-text">Are trash bins emptied?</span>
-                    <span class="answer-badge excellent">Excellent</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Checklist -->
-        <div class="checklist">
-            <h3>Material Availability</h3>
-            <div class="checklist-grid">
-                <div class="checklist-item">Cleaning detergents: <strong>Available</strong></div>
-                <div class="checklist-item">Mop & Broom: <strong>Available</strong></div>
-                <div class="checklist-item missing">Trash bags: <strong>Missing</strong></div>
-                <div class="checklist-item">Gloves & Masks: <strong>Available</strong></div>
-            </div>
-        </div>
-
-        <div class="bottom-section">
-            <!-- Signature -->
-            <div class="signature">
-                <div>
-                    <img src="signature.png" alt="Signature">
-                    <p>John Doe</p>
-                </div>
-                <div>
-                    <p style="font-size:11px; color:#94a3b8;">Generated: Oct 12, 2025</p>
-                </div>
-            </div>
-
-            <!-- All images -->
-            <div class="all-images">
-                <img src="office_desk.jpg" alt="Image">
-                <img src="trash_bin.jpg" alt="Image">
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            <div class="footer-left">© 2025 SparkClean Facility Services</div>
-            <div class="page-number"></div>
-        </footer>
-
+    <!-- Overall Score -->
+    <div class="score-box">
+        Overall Points: 52 / 55
     </div>
+
+    <!-- Task 1: Restroom -->
+    <div style="margin-bottom: 20px;">
+        <div class="section-title">
+            Restroom Cleaning
+            <span class="section-score">(28 / 30)</span>
+        </div>
+
+        <!-- Question 1 -->
+        <table class="question-table">
+            <tr>
+                <td class="q-text">Are sinks and counters free of stains and debris?</td>
+                <td style="width: 80px; text-align: right;">
+                    <span class="badge badge-excellent">Excellent</span>
+                </td>
+            </tr>
+            <!-- Remarks Row -->
+            <tr class="remarks-row">
+                <td colspan="2">
+                    Minor watermarks near faucet; cleaned during recheck.
+                </td>
+            </tr>
+            <!-- Images Row -->
+            <tr class="img-row">
+                <td colspan="2">
+                    <!-- Use public_path() for images -->
+                    <div class="q-img" style="background:#eee;"></div>
+                    <div class="q-img" style="background:#ddd;"></div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Question 2 -->
+        <table class="question-table">
+            <tr>
+                <td class="q-text">Are mirrors streak-free and polished?</td>
+                <td style="width: 80px; text-align: right;">
+                    <span class="badge badge-good">Good</span>
+                </td>
+            </tr>
+            <tr class="remarks-row">
+                <td colspan="2">Slight streaks near edges.</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Task 2: Office Area -->
+    <div style="margin-bottom: 20px;">
+        <div class="section-title">
+            Office Area Cleaning
+            <span class="section-score">(24 / 25)</span>
+        </div>
+
+        <table class="question-table">
+            <tr>
+                <td class="q-text">Are desks and surfaces dust-free?</td>
+                <td style="width: 80px; text-align: right;">
+                    <span class="badge badge-excellent">Excellent</span>
+                </td>
+            </tr>
+        </table>
+
+        <table class="question-table">
+            <tr>
+                <td class="q-text">Are trash bins emptied?</td>
+                <td style="width: 80px; text-align: right;">
+                    <span class="badge badge-excellent">Excellent</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Checklist (Converted from Grid to Table columns) -->
+    <div class="checklist-box">
+        <div class="checklist-header">Material Availability</div>
+        <table>
+            <tr>
+                <!-- Column 1 -->
+                <td width="50%" class="check-item">
+                    <span class="dot">&bull;</span> Cleaning detergents: <strong>Available</strong>
+                </td>
+                <!-- Column 2 -->
+                <td width="50%" class="check-item">
+                    <span class="dot">&bull;</span> Mop & Broom: <strong>Available</strong>
+                </td>
+            </tr>
+            <tr>
+                <!-- Column 1 -->
+                <td width="50%" class="check-item missing-item">
+                    <span class="dot missing-dot">&bull;</span> Trash bags: <strong>Missing</strong>
+                </td>
+                <!-- Column 2 -->
+                <td width="50%" class="check-item">
+                    <span class="dot">&bull;</span> Gloves & Masks: <strong>Available</strong>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Signature & Bottom Gallery -->
+    <div class="signature-section">
+        <table>
+            <tr>
+                <td width="50%">
+                    <!-- Signature Image -->
+                    <!-- <img src="{{ public_path('images/signature.png') }}" class="sig-img"> -->
+                    <div style="height:40px; border-bottom:1px solid #000; width:150px; margin-bottom:5px;"></div>
+                    <p style="margin:0; font-weight:bold;">John Doe</p>
+                </td>
+                <td width="50%" class="text-right" style="vertical-align: bottom;">
+                    <p class="text-secondary" style="font-size:11px;">Generated: Oct 12, 2025</p>
+                </td>
+            </tr>
+        </table>
+
+        <div style="margin-top: 15px;">
+            <!-- Gallery Images -->
+            <div class="gallery-img" style="background:#eee;"></div>
+            <div class="gallery-img" style="background:#ddd;"></div>
+        </div>
+    </div>
+
+    <!-- Fixed Footer -->
+    <div class="footer-fixed">
+        <table>
+            <tr>
+                <td>&copy; 2025 SparkClean Facility Services</td>
+                <td class="text-right">Page <span class="page-number"></span></td>
+            </tr>
+        </table>
+    </div>
+
 </body>
 
 </html>
