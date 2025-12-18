@@ -12,7 +12,7 @@ Route::middleware('auth:sanctum', 'verified')->group(function () {
     Route::get('/inspection/{report}', InspectionSurvey::class)->name('inspection.survey');
 });
 Route::get('/check', function () {
-    $record = Inspectionreport::first();
+    $record = Inspectionreport::first();+
     return view('inspect-report-template', ['record' => $record]);
 });
 Route::get('/task', function () {
